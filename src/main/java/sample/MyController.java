@@ -43,15 +43,23 @@ public class MyController {
     private static final int GRID_HEIGHT = 40;
     private static final int MAX_H_NUM_GRID = 12;
     private static final int MAX_V_NUM_GRID = 12;
-
+       
     private Label grids[][] = new Label[MAX_V_NUM_GRID][MAX_H_NUM_GRID]; //the grids on arena
+    
+    private static final int MAX_NUM_OF_Tower = 66;
+    private Tower towers[] = new Tower[10];
+    
+    private static final int MAX_NUM_OF_Monster = 66;
+    private Monster monsters[] = new Monster[10];
+    
     private int x = -1, y = 0; //where is my monster
     /**
      * A dummy function to show how button click works
      */
     @FXML
     private void play() {
-        System.out.println("Play button clicked");
+        System.out.println("Game Start");
+        //generateMonster();
     }
 
     /**
@@ -84,15 +92,24 @@ public class MyController {
 
     @FXML
     private void nextFrame() {
-        if (x == -1) {
-            grids[0][0].setText("M");
-            x = 0;
-            return;
-        }
-        if (y == MAX_V_NUM_GRID - 1)
-            return;
-        grids[y++][x].setText("");
-        grids[y][x].setText("M");
+//        if (x == -1) {
+//            grids[0][0].setText("M");
+//            x = 0;
+//            return;
+//        }
+//        if (y == MAX_V_NUM_GRID - 1)
+//            return;
+//        grids[y++][x].setText("");
+//        grids[y][x].setText("M");
+    	int i=0;
+    	while(towers[i]!=null) {
+    		towers[i].attack();
+    	}
+    	i=0;
+    	while(monsters[i]!=null) {
+    		monsters[i].move();
+    		i++;
+    	}
     }
 
     /**
