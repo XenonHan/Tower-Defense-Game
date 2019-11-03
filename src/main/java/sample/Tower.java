@@ -30,6 +30,7 @@ public abstract class Tower extends Item{
 	}
 	int getCost() {return cost;}
 	TowerType getTowerTyper() {return type;}
+	int getUpgrateCost() {return cost/3;}//it is the cost for upgrade the tower
 
 	
 	//This function check whether the monster is in the attack range of tower
