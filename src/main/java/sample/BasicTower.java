@@ -4,9 +4,9 @@ public class BasicTower extends Tower{
 	
 
 	
-	public BasicTower(double coodinateX, double coordinateY,int power)
+	public BasicTower(int coodinateX, int coordinateY,int power)
 	{
-		super(coodinateX, coordinateY, 65, TowerType.BasicTower);
+		super(coodinateX, coordinateY, 65, TowerType.BasicTower,10);
 		this.power=power;
 	}
 	

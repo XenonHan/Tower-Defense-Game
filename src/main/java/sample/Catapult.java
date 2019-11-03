@@ -11,9 +11,9 @@ public class Catapult extends Tower {
 	int coolingTime=4; //I set to 3 frame, after that, set the status to active
 	int remainCoolingPeriod;
 	
-	public Catapult(double coodinateX, double coordinateY,int power)
+	public Catapult(int coodinateX, int coordinateY,int power)
 	{
-		super(coodinateX, coordinateY, 150, TowerType.Catapult);
+		super(coodinateX, coordinateY, 150, TowerType.Catapult,15);
 		this.power=power;
 		
 	}
@@ -22,7 +22,7 @@ public class Catapult extends Tower {
 	{
 		double tempX=monster.getX();
 		double tempY=monster.getY();
-		double tempRange=Math.sqrt(Math.pow((coordinateX-tempX),2)+Math.pow((coordinateY-tempY),2));
+		double tempRange=Math.sqrt(Math.pow((coord.x-tempX),2)+Math.pow((coord.y-tempY),2));
 		
 		if(tempRange<range&&tempRange>50)
 		{
@@ -66,7 +66,7 @@ public class Catapult extends Tower {
 				
 				for(int i=0;i<counter;i++)
 				{
-					tempDistance=Math.sqrt(Math.pow((coordinateX-subMonser[i].getX()),2)+Math.pow((coordinateY-subMonser[i].getY()),2));
+					tempDistance=Math.sqrt(Math.pow((coord.x-subMonser[i].getX()),2)+Math.pow((coord.y-subMonser[i].getY()),2));
 					if(tempDistance-tempRange<=25)
 					{
 						tempMonster[k]=subMonser[i];

@@ -11,9 +11,9 @@ public class LaserTower extends Tower {
 	int counter=0;
 	int subCounter=0;
 	
-	public LaserTower(double coodinateX, double coordinateY,int power)
+	public LaserTower(int coodinateX, int coordinateY,int power)
 	{
-		super(coodinateX, coordinateY, 480 , TowerType.LaserTower);
+		super(coodinateX, coordinateY, 480 , TowerType.LaserTower,20);
 		this.power=power;
 	}
 	
@@ -25,8 +25,8 @@ public class LaserTower extends Tower {
 	{
 		double tempX=monster.getX();
 		double tempY=monster.getY();
-		double tempRange=Math.sqrt(Math.pow((coordinateX-tempX),2)+Math.pow((coordinateY-tempY),2));
-		double tmpSlope=(coordinateY-tempY)/(coordinateX-tempX); 
+		double tempRange=Math.sqrt(Math.pow((coord.x-tempX),2)+Math.pow((coord.y-tempY),2));
+		double tmpSlope=(coord.y-tempY)/(coord.x-tempX); 
 	
 		if(closestMon==null||tempRange<closestMonDistance )
 		{
@@ -45,7 +45,7 @@ public class LaserTower extends Tower {
 	boolean inAttackRange(Monster monster)
 	{
 		//y-y1=m(x-x1) -> check the monster is on the line or not
-		if(coordinateY-monster.getY()-slope*(coordinateX-monster.getX())<0.01)//double compare
+		if(coord.y-monster.getY()-slope*(coord.x-monster.getX())<0.01)//double compare
 		{
 			SetOfMonster[counter]=monster;
 			counter++;
@@ -53,8 +53,8 @@ public class LaserTower extends Tower {
 		}
 		
 		//within 3px also attacked
-		double distanceY=coordinateY-monster.getY();
-		double distanceX=slope*(coordinateX-monster.getX());
+		double distanceY=coord.y-monster.getY();
+		double distanceX=slope*(coord.x-monster.getX());
 		
 		if(distanceY+3-distanceX<=0.01||distanceY-3-distanceX<=0.01)
 		{
