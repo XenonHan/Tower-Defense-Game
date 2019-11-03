@@ -4,9 +4,9 @@ public class IceTower extends Tower {
 	
 	int freezeTime;//The monster will slow down by freezeTime after attacked, move slower, you decide the freeze time 
 	
-	public IceTower(double coodinateX, double coordinateY,int power,int freezeTime)
+	public IceTower(int coodinateX, int coordinateY,int power,int freezeTime)
 	{
-		super(coodinateX, coordinateY, 65, TowerType.IceTower);
+		super(coodinateX, coordinateY, 65, TowerType.IceTower,13);
 		this.power=power;
 		this.freezeTime=freezeTime;
 		

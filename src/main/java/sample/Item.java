@@ -3,7 +3,7 @@ package sample;
 
 public class Item {
     //enum ObjectState {NORMAL, DEAD, FROZEN};
-    private Coordinate coord;
+    protected Coordinate coord;
 
     public Item(int x, int y){
         coord = new Coordinate();

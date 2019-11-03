@@ -5,40 +5,31 @@ enum TowerType{NA, BasicTower, IceTower, Catapult,LaserTower}
 
 
 
-public abstract class Tower {
+public abstract class Tower extends Item{
 	protected int MAX_MONSTER=100;//you may change latter
-	protected double coordinateX;
-	protected double coordinateY;
 	protected double range;
 	protected int power;
 	protected TowerType type;
 	protected boolean status;
+	protected int cost;
 	
 	
 	//monster data, the closest one
 	protected Monster closestMon=null; 
 	protected double closestMonDistance=0;
 	
-	Tower()
+
+	Tower(int x, int y, double range, TowerType type,int cost)
 	{
-		coordinateX=coordinateY=range=0; 
-		status=false;
-		status=false;
-		power=0;
-		type=TowerType.NA;
-	}
-	
-	Tower(double x, double y, double range, TowerType type)
-	{
-		coordinateX=x;
-		coordinateY=y;
+		super(x,y);
 		this.range=range;
 		this.type=type;
 		status=true;
-		
+		this.cost=cost;
 		
 	}
-	
+	int getCost() {return cost;}
+	TowerType getTowerTyper() {return type;}
 
 	
 	//This function check whether the monster is in the attack range of tower
@@ -46,7 +37,7 @@ public abstract class Tower {
 	{
 		double tempX=monster.getX();
 		double tempY=monster.getY();
-		double tempRange=Math.sqrt(Math.pow((coordinateX-tempX),2)+Math.pow((coordinateY-tempY),2));
+		double tempRange=Math.sqrt(Math.pow((coord.x-tempX),2)+Math.pow((coord.y-tempY),2));
 		
 		if(tempRange<=range)
 		{
