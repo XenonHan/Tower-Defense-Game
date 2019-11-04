@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -15,38 +16,26 @@ import javafx.scene.paint.Color;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-
-import java.awt.*;
-import java.net.URISyntaxException;
-
-import static java.lang.Thread.sleep;
+import javafx.stage.StageStyle;
 
 
 public class MyController {
     @FXML
     private Button buttonNextFrame;
-
     @FXML
     private Button buttonSimulate;
-
     @FXML
     private Button buttonPlay;
-
     @FXML
     private AnchorPane paneArena;
-
     @FXML
     private Label labelBasicTower;
-
     @FXML
     private Label labelIceTower;
-
     @FXML
     private Label labelCatapult;
-
     @FXML
     private Label labelLaserTower;
-
     @FXML
     private Label labelMoneyLeft;
 
@@ -68,16 +57,19 @@ public class MyController {
     @FXML
     private void play() {
         System.out.println("Game Start");
-    }
-    private void updateMoney(){
-        labelMoneyLeft.setText(String.valueOf(arena.getMoney()));
+        buttonNextFrame.setDisable(false);
+        buttonPlay.setDisable(true);
+        arena.nextRound();
+        //testing, it is useless
+        Image monsterImage = new Image("file:src/main/resources/fox.png", 20, 20, true, true);
+        grids[0][0].setGraphic(new ImageView(monsterImage));
+        grids[0][0].setAlignment(Pos.CENTER);
     }
 
-    /**
-     * A function that create the Arena
-     */
     @FXML
     public void createArena() {
+        buttonNextFrame.setDisable(true);
+        buttonSimulate.setDisable(true);
         if (grids[0][0] != null)
             return; //created already
         for (int i = 0; i < MAX_V_NUM_GRID; i++)
@@ -102,20 +94,39 @@ public class MyController {
 
     @FXML
     private void nextFrame() {
-//        if (x == -1) {
-//            grids[0][0].setText("M");
-//            x = 0;
-//            return;
-//        }
-//        if (y == MAX_V_NUM_GRID - 1)
-//            return;
-//        grids[y++][x].setText("");
-//        grids[y][x].setText("M");
-        arena.nextRound();
+        arena.nextRound();                      //process next round
+        //todo clear all the white grid
+        for(int i=0; i<MAX_V_NUM_GRID; i++){
+            for(int j=0; j<MAX_H_NUM_GRID; j++){
+                if (j % 2 == 0 || i == ((j + 1) / 2 % 2) * (MAX_V_NUM_GRID - 1)){
+                    grids[i][j].setGraphic(null);       //remove all white grid image;
+                }
+            }
+        }
+        for(int i=0; i<arena.num_items; i++){               //place monster in updated location
+            if((arena.getItems())[i] instanceof Monster){
+                Monster monster = (Monster)((arena.getItems())[i]);
+                int x = monster.coord.x;
+                int y = monster.coord.y;
+                String url;
+                switch(monster.getType()){
+                    case Fox: url = "file:src/main/resources/fox.png"; break;
+                    case Penguin: url = "file:src/main/resources/penguin.png"; break;
+                    case Unicorn: url = "file:src/main/resources/unicorn.png"; break;
+                    default: throw new IllegalArgumentException("invalid type of monster");
+                }
+                Image monsterImage = new Image(url, 30, 30, true, true);
+                grids[y][x].setGraphic(new ImageView(monsterImage));
+                grids[y][x].setAlignment(Pos.CENTER);
+                grids[y][x].setGraphic(null);
+            }
+        }
         if(arena.isGameOver()){
             System.out.println("Game Over");
+            return;
         }
-        updateMoney();
+        //update resources
+        labelMoneyLeft.setText(String.valueOf(arena.getMoney()));
     }
 
     /**
@@ -143,6 +154,7 @@ public class MyController {
 
 class DragEventHandler implements EventHandler<MouseEvent> {
     private Label source;
+
     public DragEventHandler(Label e) {
         source = e;
     }
@@ -150,7 +162,6 @@ class DragEventHandler implements EventHandler<MouseEvent> {
     public void handle (MouseEvent event) {
         System.out.println("Draging a " + source.getText());
         Dragboard db = source.startDragAndDrop(TransferMode.ANY);
-        //((Node) (event.getSource())).getScene().setCursor(Cursor.NONE);
         ClipboardContent content = new ClipboardContent();
         content.putString(source.getText());
         db.setContent(content);
@@ -177,7 +188,6 @@ class DragOverEventHandler implements EventHandler<DragEvent> {
             /* allow for both copying and moving, whatever user chooses */
             event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
         }
-
         event.consume();
     }
 }
@@ -235,6 +245,8 @@ class DragDroppedEventHandler implements EventHandler<DragEvent> {
         tower = null;
     }
     private Circle generateShadedRegion(){
+        //todo calculate and represent the range carefully
+        //double range = tower.getRange();
         Circle shadedArea = new Circle();
         shadedArea.centerXProperty().set(x*40 + 20);
         shadedArea.centerYProperty().set(y*40 + 20);
@@ -254,6 +266,51 @@ class DragDroppedEventHandler implements EventHandler<DragEvent> {
         }
         Image towerImage = new Image(url, 40, 40, true, true);
         return new ImageView(towerImage);
+    }
+
+    @Override
+    public void handle(DragEvent event) {
+        System.out.println("xx");
+        Dragboard db = event.getDragboard();
+        boolean success = false;
+        Node towerIcon = getTowerIcon(db);
+        Circle shadedArea = generateShadedRegion();
+
+        if (target.getGraphic() == null) {  //if it already have tower,cannot build tower
+            if(!arena.addBuilding(0, x, y)){
+                return;
+            }
+            success = true;
+            target.setGraphic(towerIcon);
+            target.setAlignment(Pos.CENTER);
+            //update resources
+            labelMoneyLeft.setText(String.valueOf(arena.getMoney()));
+            tower = (Tower)arena.getItemtAt(new Coordinate(x,y));
+            MouseExitedEventHandler exitEvent = new MouseExitedEventHandler(target, paneArena, shadedArea);
+            target.setOnMouseExited(exitEvent);
+            MouseEnterEventHandler mouseEnter = new MouseEnterEventHandler(target, paneArena, shadedArea, tower, exitEvent);
+            target.setOnMouseEntered(mouseEnter);
+            target.setOnMouseClicked(new MouseClickedEventHandler(target, paneArena, tower, arena, labelMoneyLeft));
+        }
+        event.setDropCompleted(success);
+        event.consume();
+    }
+}
+
+class MouseEnterEventHandler implements EventHandler<MouseEvent>{
+    //show tower info and shaded fire area
+    private Label target;
+    private AnchorPane paneArena;
+    private Circle shadedArea;
+    private Tower tower;
+    private MouseExitedEventHandler exitEvent;
+
+    public MouseEnterEventHandler(Label target, AnchorPane paneArena, Circle shadedArea, Tower tower, MouseExitedEventHandler exitEvent) {
+        this.target = target;
+        this.paneArena = paneArena;
+        this.shadedArea = shadedArea;
+        this.tower = tower;
+        this.exitEvent = exitEvent;
     }
     private Label getInfoPane(){
         int x = tower.coord.x;
@@ -277,59 +334,19 @@ class DragDroppedEventHandler implements EventHandler<DragEvent> {
         infoPane.setMinHeight(100);
         infoPane.setMinWidth(100);
         infoPane.setStyle("-fx-border-color: black;");
-        infoPane.setText("Type: " + tower.getType() + "\nLevel: " + 1 + "\nPower: " + 10 +
+        infoPane.setText("Type: " + tower.getType() + "\nLevel: " + 1 + "\nPower: " + tower.getPower() +
                 "\nUpgrade Cost: " + tower.getCost()+ "\nRange: " + 20);
+        //Todo improve here
+        //freeze power of ice tower, cool down time of catapult not handel yet
         return infoPane;
-    }
-    @Override
-    public void handle(DragEvent event) {
-        System.out.println("xx");
-        Dragboard db = event.getDragboard();
-        boolean success = false;
-        Node towerIcon = getTowerIcon(db);
-        Circle shadedArea = generateShadedRegion();
-
-        if (target.getGraphic() == null) {  //if it already have tower,cannot build tower
-            if(!arena.addBuilding(0, x, y)){
-                return;
-            }
-            target.setGraphic(towerIcon);
-            labelMoneyLeft.setText(String.valueOf(arena.getMoney()));
-            success = true;
-        }
-        tower = (Tower)arena.getItemtAt(new Coordinate(x,y));
-        Label infoPane = getInfoPane();
-
-        target.setOnMouseEntered(new MouseEnterEventHandler(target, paneArena, x, y, shadedArea, infoPane));
-        target.setOnMouseExited(new MouseExitedEventHandler(target, paneArena, shadedArea, infoPane));
-        target.setOnMouseClicked(new MouseClickedEventHandler(target, paneArena));
-        event.setDropCompleted(success);
-        event.consume();
-    }
-}
-
-class MouseEnterEventHandler implements EventHandler<MouseEvent>{
-    //show tower info and shaded fire area
-    private Label target;
-    private AnchorPane paneArena;
-    private int x;
-    private int y;
-    private Circle shadedArea;
-    private Node infoPane;
-
-    public MouseEnterEventHandler(Label target, AnchorPane paneArena, int x, int y, Circle shadedArea, Node infoPane) {
-        this.target = target;
-        this.paneArena = paneArena;
-        this.x = x;
-        this.y = y;
-        this.shadedArea = shadedArea;
-        this.infoPane = infoPane;
     }
     @Override
     public void handle (MouseEvent event) {
         System.out.println("mouse over");
         paneArena.getChildren().add(shadedArea);
+        Node infoPane = getInfoPane();
         paneArena.getChildren().add(infoPane);
+        exitEvent.setInfoPane(infoPane);
         target.toFront();
         event.consume();
     }
@@ -340,13 +357,18 @@ class MouseExitedEventHandler implements EventHandler<MouseEvent>{
     private Label target;
     private AnchorPane paneArena;
     private Circle shadedArea;
-    private Label infoPane;
-    public MouseExitedEventHandler(Label target, AnchorPane paneArena, Circle shadedArea, Label infoPane) {
+    private Node infoPane;
+    public MouseExitedEventHandler(Label target, AnchorPane paneArena, Circle shadedArea) {
         this.target = target;
         this.paneArena = paneArena;
         this.shadedArea = shadedArea;
+        infoPane = null;
+    }
+
+    public void setInfoPane(Node infoPane) {
         this.infoPane = infoPane;
     }
+
     @Override
     public void handle (MouseEvent event) {
         System.out.println("mouse exit");
@@ -360,48 +382,92 @@ class MouseClickedEventHandler implements EventHandler<MouseEvent>{
     //remove tower info and shaded fire area
     private Label target;
     private AnchorPane paneArena;
-    public MouseClickedEventHandler(Label target, AnchorPane paneArena) {
+    private Tower tower;
+    private Arena arena;
+    Label labelMoneyLeft;
+    public MouseClickedEventHandler(Label target, AnchorPane paneArena, Tower tower, Arena arena, Label labelMoneyLeft) {
         this.target = target;
         this.paneArena = paneArena;
+        this.tower = tower;
+        this.arena = arena;
+        this.labelMoneyLeft = labelMoneyLeft;
     }
     @Override
     public void handle (MouseEvent event) {
         System.out.println("mouse clicked");
+        Stage stage = new Stage();
         HBox btnPlatform = new HBox();
-        //btnPlatform.setPadding(new Insets(15, 15, 15, 15));
-        btnPlatform.setStyle("-fx-background-color: black");
+        btnPlatform.setAlignment(Pos.CENTER);
         Button destroy = new Button("Destroy Tower");
-        destroy.setOnAction(new DestroyActionHandler());
+        destroy.setOnAction(new DestroyActionHandler(stage, tower, arena, target));
         Button upgrade = new Button("Upgrade Tower");
-        upgrade.setOnAction(new UpgradeActionHandler());
-        
+        upgrade.setOnAction(new UpgradeActionHandler(stage, tower, arena, labelMoneyLeft));
         btnPlatform.getChildren().add(destroy);
         btnPlatform.getChildren().add(upgrade);
-        btnPlatform.setStyle("-fx-border-color: black;");
-        btnPlatform.setLayoutX(20);
-        btnPlatform.setLayoutX(20);
-        btnPlatform.setMaxHeight(100);
-        btnPlatform.setMaxWidth(100);
-        btnPlatform.setMinHeight(100);
-        btnPlatform.setMinWidth(100);
 
-        Scene scene = new Scene(btnPlatform, 300, 50);
-        Stage stage = new Stage();
+//        btnPlatform.setPadding(new Insets(15, 15, 15, 15));
+//        btnPlatform.setStyle("-fx-background-color: black");
+//        btnPlatform.setStyle("-fx-border-color: black;");
+//        btnPlatform.setLayoutX(20);
+//        btnPlatform.setLayoutX(20);
+//        btnPlatform.setMaxHeight(100);
+//        btnPlatform.setMaxWidth(100);
+//        btnPlatform.setMinHeight(100);
+//        btnPlatform.setMinWidth(100);
+
+        Scene scene = new Scene(btnPlatform, 220, 40);
+        stage.setResizable(false);
+        stage.initStyle(StageStyle.UTILITY);
         stage.setScene(scene);
+        stage.setTitle("Tower Operation");
         stage.show();
         event.consume();
     }
 }
 
-class DestroyActionHandler implements EventHandler<ActionEvent> {
-    @Override
-    public void handle(ActionEvent event) {
-        System.out.println("Destroy button clicked");
-    }
-}
 class UpgradeActionHandler implements EventHandler<ActionEvent> {
+    Stage stage;
+    Tower tower;
+    Arena arena;
+    Label labelMoneyLeft;
+
+    UpgradeActionHandler(Stage stage, Tower tower, Arena arena, Label labelMoneyLeft){
+        this.stage = stage;
+        this.tower = tower;
+        this.arena = arena;
+        this.labelMoneyLeft = labelMoneyLeft;
+    }
     @Override
     public void handle(ActionEvent event) {
         System.out.println("Upgrade button clicked");
+        arena.upgradeTower(tower);
+        //update resources
+        labelMoneyLeft.setText(String.valueOf(arena.getMoney()));
+        stage.close();
+    }
+}
+
+class DestroyActionHandler implements EventHandler<ActionEvent> {
+    Stage stage;
+    Tower tower;
+    Arena arena;
+    Label target;
+    public DestroyActionHandler(Stage stage, Tower tower, Arena arena, Label target){
+        this.stage = stage;
+        this.tower = tower;
+        this.arena = arena;
+        this.target = target;
+    }
+    @Override
+    public void handle(ActionEvent event) {
+        //Todo implement the remove operation// not quit sure correct or not
+        System.out.println("Destroy button clicked");
+        target.setOnMouseEntered(null);
+        target.setOnMouseExited(null);
+        target.setOnMouseClicked(null);
+        target.setGraphic(null);
+        System.out.println("remove mouse event");
+        arena.removeItem(tower);
+        stage.close();
     }
 }

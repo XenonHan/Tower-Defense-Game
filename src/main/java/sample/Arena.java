@@ -1,5 +1,7 @@
 package sample;
 
+import java.util.Random;
+
 public class Arena {
 
 	private Item items[];
@@ -9,8 +11,15 @@ public class Arena {
 
 	private void generateMonster() {
 		System.out.println("monster generated");
-		Monster e;
-		e = new Monster( 2,3);
+        Random rand = new Random();
+        Monster e;
+        int randInt = rand.nextInt(3);
+        switch(randInt){
+            case 0: e = new Monster( 0,0, EnemyType.Fox, 10); break;
+            case 1: e = new Monster( 0,0, EnemyType.Unicorn,20 ); break;
+            case 2: e = new Monster( 0,0, EnemyType.Penguin, 30); break;
+            default: throw new IllegalArgumentException();
+        }
 		addItem(e);
 	}
 
@@ -26,6 +35,7 @@ public class Arena {
 		for(int i=0; i<num_items; i++) {
 			if(items[i] instanceof Monster){
 				Coordinate coord = items[i].coord;
+				//todo check coordinate
 				if(coord.x>12 && coord.y==0){
 					return true;
 				}
@@ -34,7 +44,7 @@ public class Arena {
 		return false;
 	}
 
-	public void removeMonster(Monster monster) {
+	public void removeDeadMonster(Monster monster) {
 		if (monster==null){
 			throw new IllegalArgumentException();
 		}
@@ -95,14 +105,29 @@ public class Arena {
 //			}
 //		}
 		//remove dead monster
+        for(int i=0; i<num_items; i++){
+            if(items[i] instanceof Monster){
+                Monster m = (Monster)items[i];
+                if(m.isDead()){
+                    removeItem(m);
+                    i--;
+                }
+            }
+        }
+        //todo move the monster i.e. update the new location of each monster
+
 		generateMonster();
 	}
 
 	public boolean addBuilding(int buildingID, int x, int y) {
 		Tower temp;
-		switch(buildingID){
-			case 0: temp = new BasicTower(x , y, 2); break;
-			default: throw new IllegalArgumentException();
+		//todo make tower
+		switch(buildingID){     //junk
+			case 0: temp = new BasicTower(x , y, 13); break;
+            case 1: temp = new BasicTower(x , y, 14); break;
+            case 2: temp = new BasicTower(x , y, 15); break;
+            case 3: temp = new BasicTower(x , y, 16); break;
+            default: throw new IllegalArgumentException();
 		}
 		//money limit
 		if(money-temp.getCost()<0){
@@ -115,7 +140,7 @@ public class Arena {
 	}
 
 	public boolean upgradeTower(Tower t){
-		System.out.println("tower generated");
+		System.out.println("tower upgraded");
 		if (t == null){
 			throw new IllegalArgumentException();
 		}
@@ -128,8 +153,26 @@ public class Arena {
 		return true;
 	}
 
+	public void removeItem(Item item){				//remove a monster or tower from the item array
+		if(item==null){
+			throw new IllegalArgumentException();
+		}
+		num_items--;
+		Item temp[] = new Item[num_items];
+		for(int i=0, j=0; i<num_items+1; i++, j++){
+			if(items[i]==item){
+				j--;
+				continue;
+			}
+			temp[j] = items[i];
+		}
+		items = temp;
+	}
+
 	public int getMoney() {
 		return money;
 	}
-	//void getConstObjects(const Object**&, int&) const;
+	public Item[] getItems(){
+		return items;
+	}
 }
