@@ -1,7 +1,7 @@
 package sample;
 
 
-enum TowerType{NA, BasicTower, IceTower, Catapult,LaserTower}
+enum TowerType{BasicTower, IceTower, Catapult,LaserTower}
 enum TowerStatus{Active, Passive, Destroyed}
 
 
@@ -83,8 +83,9 @@ public abstract class Tower extends Item{
 	//for arena to plot the graph
 	Coordinate getGraph()
 	{
-		closestMon.coord.slope=coord.slope;//store the slope btw tower and monster for laser tower;
-		return closestMon.coord;
+		Coordinate temp=closestMon.coord;
+		temp.slope=coord.slope;//store the slope btw tower and monster for laser tower;
+		return temp;
 	}
 	abstract boolean upgrade(); // you should handle player's recourse in arena 
 	abstract boolean attackMonster(Monster monster[], int size);
