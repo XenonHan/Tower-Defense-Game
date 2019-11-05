@@ -5,19 +5,21 @@ import java.util.Random;
 public class Arena {
 
 	private Item items[];
-	int num_items;
+	private int num_items;
 	private int money;
-	int turn;
+	private int turn;
 
-	private void generateMonster() {
+	//todo should make back to private afterwards
+	public void generateMonster() {
 		System.out.println("monster generated");
         Random rand = new Random();
         Monster e;
         int randInt = rand.nextInt(3);
         switch(randInt){
-            case 0: e = new Monster( 0,0, EnemyType.Fox, 10); break;
-            case 1: e = new Monster( 0,0, EnemyType.Unicorn,20 ); break;
-            case 2: e = new Monster( 0,0, EnemyType.Penguin, 30); break;
+        	//todo implements to call correctly after Boby's work
+            case 0: e = new Monster(0,0); break;
+            case 1: e = new Monster(2,2); break;
+            case 2: e = new Monster(4,4); break;
             default: throw new IllegalArgumentException();
         }
 		addItem(e);
@@ -30,7 +32,9 @@ public class Arena {
 		money = 10;         //initial amount of resources
 		turn = 0;
 	}
-
+	public int getNumItems(){
+		return num_items;
+	}
 	public boolean isGameOver() {
 		for(int i=0; i<num_items; i++) {
 			if(items[i] instanceof Monster){
@@ -44,13 +48,6 @@ public class Arena {
 		return false;
 	}
 
-	public void removeDeadMonster(Monster monster) {
-		if (monster==null){
-			throw new IllegalArgumentException();
-		}
-		//remove monster
-	}
-
 	public void addItem(Item newItem) {
 		System.out.println("adding item");
 		num_items++;
@@ -62,7 +59,7 @@ public class Arena {
 		items = temp;
 	}
 
-	Item getItemtAt(Coordinate coord) {
+	Item getItemAt(Coordinate coord) {
 		for(int i=0; i<num_items; i++){
 			Coordinate c = items[i].coord;
 			if(coord.x==c.x && coord.y==c.y){
@@ -73,37 +70,20 @@ public class Arena {
 	}
 
 	public void nextRound() {
-//		for(int i=0; i<num_items; i++){
-//			if(items[i] instanceof Tower){
-//				Tower t = (Tower)items[i];
-//				int inRangeEnemyIndex[] = new int[num_items];
-//				int numOfInRangeEnemy=0;
-//				int smallest_id = -1;
-//
-//				Coordinate fireTowerCoord = items[i].coord;
-//				for(int j=0; j<num_items; j++){
-//					if(items[j] instanceof Monster){		//check whether a monster is in range of tower
-//						Coordinate targerMonsterCoord = items[j].coord;
-//						if(t.isInRange(targerMonsterCoord)){
-//							inRangeEnemyIndex[numOfInRangeEnemy++] = j;
-//						}
-//					}
-//				}
-//
-//				if(numOfInRangeEnemy>0){							//shoot the closest enemy
-//					int distance=100;
-//					for(int k=0; k<numOfInRangeEnemy; k++){
-//						Coordinate temp = items[inRangeEnemyIndex[k]].coord;
-//						int d = Math.abs(temp.x-fireTowerCoord.x) + Math.abs(temp.y-fireTowerCoord.y);
-//						if(d < distance){
-//							distance = d;
-//							smallest_id=inRangeEnemyIndex[k];
-//						}
-//					}
-//					t.fire((Monster)items[smallest_id]);
-//				}
-//			}
-//		}
+		int numMonster = 0;
+		Monster monsterArray[] = new Monster[num_items];
+		for(int i=0; i<num_items; i++){
+			if(items[i] instanceof Monster){
+				monsterArray[numMonster++] = (Monster)items[i];
+			}
+		}
+		for(int i=0; i<num_items; i++){
+			if(items[i] instanceof Tower){
+				Tower t = (Tower)items[i];
+				t.attackMonster(monsterArray, numMonster);
+			}
+		}
+
 		//remove dead monster
         for(int i=0; i<num_items; i++){
             if(items[i] instanceof Monster){
@@ -114,19 +94,20 @@ public class Arena {
                 }
             }
         }
+        //todo collect resources
         //todo move the monster i.e. update the new location of each monster
-
 		generateMonster();
 	}
 
-	public boolean addBuilding(int buildingID, int x, int y) {
+	public boolean addBuilding(int towerID, int x, int y) {
 		Tower temp;
 		//todo make tower
-		switch(buildingID){     //junk
-			case 0: temp = new BasicTower(x , y, 13); break;
-            case 1: temp = new BasicTower(x , y, 14); break;
-            case 2: temp = new BasicTower(x , y, 15); break;
-            case 3: temp = new BasicTower(x , y, 16); break;
+		switch(towerID){
+			//todo default tower setting, it may change
+			case 0: temp = new BasicTower(x , y, 2); break;
+            case 1: temp = new IceTower(x , y, 0, 1); break;
+            case 2: temp = new Catapult(x , y, 3); break;
+            case 3: temp = new LaserTower(x , y, 1); break;
             default: throw new IllegalArgumentException();
 		}
 		//money limit

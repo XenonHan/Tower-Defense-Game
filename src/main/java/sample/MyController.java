@@ -103,7 +103,7 @@ public class MyController {
                 }
             }
         }
-        for(int i=0; i<arena.num_items; i++){               //place monster in updated location
+        for(int i=0; i<arena.getNumItems(); i++){               //place monster in updated location
             if((arena.getItems())[i] instanceof Monster){
                 Monster monster = (Monster)((arena.getItems())[i]);
                 int x = monster.coord.x;
@@ -234,6 +234,7 @@ class DragDroppedEventHandler implements EventHandler<DragEvent> {
     private Arena arena;
     private AnchorPane paneArena;
     private Tower tower;
+    private int towerID;
 
     DragDroppedEventHandler(Label target , int x, int y, Arena arena, Label labelMoneyLeft, AnchorPane paneArena){
         this.target = target;
@@ -243,10 +244,11 @@ class DragDroppedEventHandler implements EventHandler<DragEvent> {
         this.arena = arena;
         this.paneArena = paneArena;
         tower = null;
+        towerID = -1;
     }
     private Circle generateShadedRegion(){
         //todo calculate and represent the range carefully
-        //double range = tower.getRange();
+        //double range = tower.getRange();      //uncomment this will have bug idk why
         Circle shadedArea = new Circle();
         shadedArea.centerXProperty().set(x*40 + 20);
         shadedArea.centerYProperty().set(y*40 + 20);
@@ -258,10 +260,10 @@ class DragDroppedEventHandler implements EventHandler<DragEvent> {
     private Node getTowerIcon(Dragboard db){
         String url;
         switch (db.getString()){
-            case "Basic Tower": url= "file:src/main/resources/basicTower.png"; break;
-            case "Ice Tower":  url= "file:src/main/resources/iceTower.png"; break;
-            case "Catapult":  url= "file:src/main/resources/catapult.png"; break;
-            case "Laser Tower":  url= "file:src/main/resources/laserTower.png"; break;
+            case "Basic Tower": url= "file:src/main/resources/basicTower.png"; towerID=0; break;
+            case "Ice Tower":  url= "file:src/main/resources/iceTower.png"; towerID=1; break;
+            case "Catapult":  url= "file:src/main/resources/catapult.png"; towerID=2; break;
+            case "Laser Tower":  url= "file:src/main/resources/laserTower.png"; towerID=3; break;
             default: throw new IllegalArgumentException("drag tower error");
         }
         Image towerImage = new Image(url, 40, 40, true, true);
@@ -277,20 +279,19 @@ class DragDroppedEventHandler implements EventHandler<DragEvent> {
         Circle shadedArea = generateShadedRegion();
 
         if (target.getGraphic() == null) {  //if it already have tower,cannot build tower
-            if(!arena.addBuilding(0, x, y)){
-                return;
+            if(arena.addBuilding(towerID, x, y)){
+                success = true;
+                target.setGraphic(towerIcon);
+                target.setAlignment(Pos.CENTER);
+                //update resources
+                labelMoneyLeft.setText(String.valueOf(arena.getMoney()));
+                tower = (Tower)arena.getItemAt(new Coordinate(x,y));
+                MouseExitedEventHandler exitEvent = new MouseExitedEventHandler(target, paneArena, shadedArea);
+                target.setOnMouseExited(exitEvent);
+                MouseEnterEventHandler mouseEnter = new MouseEnterEventHandler(target, paneArena, shadedArea, tower, exitEvent);
+                target.setOnMouseEntered(mouseEnter);
+                target.setOnMouseClicked(new MouseClickedEventHandler(target, paneArena, tower, arena, labelMoneyLeft));
             }
-            success = true;
-            target.setGraphic(towerIcon);
-            target.setAlignment(Pos.CENTER);
-            //update resources
-            labelMoneyLeft.setText(String.valueOf(arena.getMoney()));
-            tower = (Tower)arena.getItemtAt(new Coordinate(x,y));
-            MouseExitedEventHandler exitEvent = new MouseExitedEventHandler(target, paneArena, shadedArea);
-            target.setOnMouseExited(exitEvent);
-            MouseEnterEventHandler mouseEnter = new MouseEnterEventHandler(target, paneArena, shadedArea, tower, exitEvent);
-            target.setOnMouseEntered(mouseEnter);
-            target.setOnMouseClicked(new MouseClickedEventHandler(target, paneArena, tower, arena, labelMoneyLeft));
         }
         event.setDropCompleted(success);
         event.consume();
@@ -334,8 +335,8 @@ class MouseEnterEventHandler implements EventHandler<MouseEvent>{
         infoPane.setMinHeight(100);
         infoPane.setMinWidth(100);
         infoPane.setStyle("-fx-border-color: black;");
-        infoPane.setText("Type: " + tower.getType() + "\nLevel: " + 1 + "\nPower: " + tower.getPower() +
-                "\nUpgrade Cost: " + tower.getCost()+ "\nRange: " + 20);
+        infoPane.setText("Type: " + tower.type + "\nLevel: " + 1 + "\nPower: " + tower.power +
+                "\nUpgrade Cost: " + tower.cost+ "\nRange: " + tower.range);
         //Todo improve here
         //freeze power of ice tower, cool down time of catapult not handel yet
         return infoPane;
