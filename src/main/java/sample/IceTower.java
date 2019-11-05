@@ -30,4 +30,5 @@ public class IceTower extends Tower {
 		return true; //You need to reduce recourse in arena
 	}
 
+
 }
