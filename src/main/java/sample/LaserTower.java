@@ -4,7 +4,6 @@ public class LaserTower extends Tower {
 
 
 	int MAX_MONSTER=250; //you may change this, I do not know the about the arena
-	double slope;
 	Monster[] SetOfMonster=new Monster[MAX_MONSTER];
 	Monster[] subMons=new Monster[MAX_MONSTER]; //other monster near the laser also attacked
 	int subPower=power/2;
@@ -23,8 +22,8 @@ public class LaserTower extends Tower {
 	//After you call this function and get a slope, you should then call other
 	void createLinearEquation(Monster monster)
 	{
-		double tempX=monster.getX();
-		double tempY=monster.getY();
+		double tempX=monster.coord.x;
+		double tempY=monster.coord.y;
 		double tempRange=Math.sqrt(Math.pow((coord.x-tempX),2)+Math.pow((coord.y-tempY),2));
 		double tmpSlope=(coord.y-tempY)/(coord.x-tempX); 
 	
@@ -32,7 +31,7 @@ public class LaserTower extends Tower {
 		{
 			closestMon=monster;
 			closestMonDistance=tempRange;
-			slope=tmpSlope;
+			coord.slope=tmpSlope;
 			
 		}
 		
@@ -42,36 +41,45 @@ public class LaserTower extends Tower {
 	
 	//You should first call the above function to produce a line equation (shortest monster to tower)
 	//Then you can input all the monster to this function to check wheather they are in that line
-	boolean inAttackRange(Monster monster)
+	void PlotLaserRoute(Monster monster[],int size)
 	{
-		//y-y1=m(x-x1) -> check the monster is on the line or not
-		if(coord.y-monster.getY()-slope*(coord.x-monster.getX())<0.01)//double compare
-		{
-			SetOfMonster[counter]=monster;
-			counter++;
-			return true;
-		}
 		
-		//within 3px also attacked
-		double distanceY=coord.y-monster.getY();
-		double distanceX=slope*(coord.x-monster.getX());
+		double distanceY;
+		double distanceX;
+		for(int i=0;i<size;i++)
+		{
+			//y-y1=m(x-x1) -> check the monster is on the line or not
+			if(coord.y-monster[i].coord.y-coord.slope*(coord.x-monster[i].coord.x)<0.01)//double compare
+			{
+				SetOfMonster[counter]=monster[i];
+				counter++;
+				continue;
+			}
 		
-		if(distanceY+3-distanceX<=0.01||distanceY-3-distanceX<=0.01)
-		{
-			subMons[subCounter++]=monster;
-			return true;
+			//within 3px also attacked
+			distanceY=coord.y-monster[i].coord.y;
+			distanceX=coord.slope*(coord.x-monster[i].coord.x);
+		
+			if(Math.abs(distanceY-distanceX)<=3)
+			{
+				subMons[subCounter++]=monster[i];
+				continue;
+			}
+			else if(Math.abs(distanceY-distanceX)<=coord.slope*3)
+			{
+				subMons[subCounter++]=monster[i];
+				continue;
+			}
 		}
-		else if(distanceY-distanceX-slope*3<=0.01||distanceY-distanceX+slope*3<=0.01)
-		{
-			subMons[subCounter++]=monster;
-			return true;
-		}
-		return false;
 	}
-	boolean attackMonster()
+	boolean attackMonster(Monster monster[],int size)
 	{
-		if(status==false)
+		if(status==TowerStatus.Passive||status==TowerStatus.Destroyed)
 			return false;
+		
+		
+		inAttackRange(monster,size);
+		PlotLaserRoute(monster,size);
 		
 		for(int i=0;i<counter;i++)
 			SetOfMonster[i].damage(power);
@@ -88,10 +96,16 @@ public class LaserTower extends Tower {
 	void newFrame() 
 	{
 		counter=subCounter=0; //lazy update the two arrays
-		slope=0;
+		coord.slope=0;
 		closestMon=null; 
 		closestMonDistance=0;
 		
+	}
+	void destroy()
+	{
+		status=TowerStatus.Destroyed;
+		SetOfMonster=null;
+		subMons=null;
 	}
 }
 
