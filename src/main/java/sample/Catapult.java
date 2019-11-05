@@ -23,77 +23,23 @@ public class Catapult extends Tower {
 		double tempX;
 		double tempY;
 		double tempRange;
+		double tempClosest;
 		for(int i=0;i<size;i++)
 		{
 			tempX=monster[i].coord.x;
 			tempY=monster[i].coord.y;
 			tempRange=Math.sqrt(Math.pow((coord.x-tempX),2)+Math.pow((coord.y-tempY),2));
-		
+			tempClosest=Math.sqrt(Math.pow((coord.x-440),2)+Math.pow((coord.y-0),2));
+			
 			if(tempRange<range&&tempRange>50)
 			{
-				storeclosestMonster(monster[i],tempRange);
+				storeclosestMonster(monster[i],tempClosest);
 				
 			}
 		}
-	
 		
 	}
-	
-	boolean storeclosestMonster(Monster monster,double tempRange)
-	{
-		//no tower, so first one is closest
-		if(closestMon==null)
-		{
-			closestMon=monster;
-			closestMonDistance=tempRange;
-			return true;
-		}
-		
-		//another monster within the tower attack range, but farer than closest monster
-		if(tempRange>=closestMonDistance && tempRange-closestMonDistance<=25 )
-		{
-			subMonser[counter]=monster;
-			counter++;
-			return true;
-		}
-		
-		//if the new monster shorter than previous one, update the closest monster, and also the array
-		//if the new monster shorter than previous one and the distance between them larger than  25, simply use new array
-		//because all the monster inside the array must also larger than the new monster
-		if(tempRange<closestMonDistance )
-		{
-			Monster[] tempMonster=new Monster[MAX_MONSTER];
-			double tempDistance;
-			int k=0;
-			
-			if(closestMonDistance-tempRange<=25)
-			{
-				
-				for(int i=0;i<counter;i++)
-				{
-					tempDistance=Math.sqrt(Math.pow((coord.x-subMonser[i].coord.x),2)+Math.pow((coord.y-subMonser[i].coord.y),2));
-					if(tempDistance-tempRange<=25)
-					{
-						tempMonster[k]=subMonser[i];
-						k++;
-					}
-				}
-				tempMonster[k++]=closestMon; //we also need to store this to the array as it aslo within 25px
-					
-			}
-			
-			counter=k;
-			subMonser= tempMonster; //Java have garbage collector
-			
-			closestMon=monster;
-			closestMonDistance=tempRange;
-			return true;
-		}
-		
-		return false;
-	
-	
-	}
+
 	 
 	boolean attackMonster(Monster monster[],int size)
 	{	
@@ -104,6 +50,12 @@ public class Catapult extends Tower {
 		}
 		
 		inAttackRange(monster,size);
+		
+		for(int i=0;i<size;i++)
+		{
+			if(Math.sqrt(Math.pow((closestMon.coord.x-monster[i].coord.x),2)+Math.pow((closestMon.coord.y-monster[i].coord.y),2))<=25)
+				subMonser[counter++]=monster[i];
+		}
 		
 		closestMon.damage(power); //attack the target
 		

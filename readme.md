@@ -18,8 +18,11 @@ Brief introduction the most important function in tower you want to use:
 							This function would choose the closest monster and attack
 							(I assume monster.java would have a function call "damage(int)" for me to reduce HP on monster)
 
-7. Coordinate getGraph(): This function may helps you to plot the attack route from tower to the closest monster, it return a Coordinate object, which contain the x, y
+7. Coordinate getGraph(): This function may helps you to plot the attack route from tower to the closest monster, it return a Monster object, which modified the slope to the straight line (for laser only)
 			  coordinate of the closest monster and also the slope of the straight line (for laser tower);
+			  
+8. int getAttackCost():return the recourse needed for attack action
+			  
 
 
 Other internal functions (difficult tower with tiny difference):
