@@ -2,23 +2,17 @@ package sample;
 
 //this is for test only, you can modifiy to the real Monster.java
 //the function below is necessary for Tower.java to implement, please include those functions in your Monster.java
-public class Monster {
+public class Monster extends Item{
 
 	
-	double x,y;
 	int health;
 	int speed;
 	
 
-	public Monster(){}
-	public Monster(double x, double y)
+	public Monster(int x, int y)
 	{
-		this.x=x;
-		this.y=y;
+		super(x,y);
 	}
-	
-	public double getX() {return x;}
-	public double getY() {return y;}
 	
 	public void damage(int health) 
 	{
