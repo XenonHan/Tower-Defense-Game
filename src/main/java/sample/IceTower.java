@@ -12,10 +12,12 @@ public class IceTower extends Tower {
 		
 	}
 	
-	boolean attackMonster()
+	boolean attackMonster(Monster monster[],int size)
 	{
-		if(status==false )
+		if(status==TowerStatus.Passive||status==TowerStatus.Destroyed )
 			return false;
+		
+		inAttackRange(monster,size);
 		
 		closestMon.damage(power); 
 		closestMon.slowDown(freezeTime); 

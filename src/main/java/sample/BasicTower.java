@@ -10,10 +10,12 @@ public class BasicTower extends Tower{
 		this.power=power;
 	}
 	
-	boolean attackMonster()
+	boolean attackMonster(Monster monster[],int size)
 	{
-		if(status==false)
+		if(status==TowerStatus.Passive||status==TowerStatus.Destroyed)
 			return false;
+		
+		inAttackRange(monster,size);
 		
 		closestMon.damage(power); 
 		return true;

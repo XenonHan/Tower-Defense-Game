@@ -18,18 +18,23 @@ public class Catapult extends Tower {
 		
 	}
 	
-	boolean inAttackRange(Monster monster)
+	void inAttackRange(Monster monster[],int size)
 	{
-		double tempX=monster.getX();
-		double tempY=monster.getY();
-		double tempRange=Math.sqrt(Math.pow((coord.x-tempX),2)+Math.pow((coord.y-tempY),2));
-		
-		if(tempRange<range&&tempRange>50)
+		double tempX;
+		double tempY;
+		double tempRange;
+		for(int i=0;i<size;i++)
 		{
-			storeclosestMonster(monster,tempRange);
-			return true;
+			tempX=monster[i].coord.x;
+			tempY=monster[i].coord.y;
+			tempRange=Math.sqrt(Math.pow((coord.x-tempX),2)+Math.pow((coord.y-tempY),2));
+		
+			if(tempRange<range&&tempRange>50)
+			{
+				storeclosestMonster(monster[i],tempRange);
+				
+			}
 		}
-		return false;
 	
 		
 	}
@@ -66,7 +71,7 @@ public class Catapult extends Tower {
 				
 				for(int i=0;i<counter;i++)
 				{
-					tempDistance=Math.sqrt(Math.pow((coord.x-subMonser[i].getX()),2)+Math.pow((coord.y-subMonser[i].getY()),2));
+					tempDistance=Math.sqrt(Math.pow((coord.x-subMonser[i].coord.x),2)+Math.pow((coord.y-subMonser[i].coord.y),2));
 					if(tempDistance-tempRange<=25)
 					{
 						tempMonster[k]=subMonser[i];
@@ -90,21 +95,22 @@ public class Catapult extends Tower {
 	
 	}
 	 
-	boolean attackMonster()
+	boolean attackMonster(Monster monster[],int size)
 	{	
 		
-		if(status==false)
+		if(status==TowerStatus.Passive||status==TowerStatus.Destroyed)
 		{
 			return false;
 		}
 		
+		inAttackRange(monster,size);
 		
 		closestMon.damage(power); //attack the target
 		
 		for(int i=0;i<counter;i++)// attack other within 25 px of the target
 			subMonser[i].damage(subPower);
 		
-		status=false; //make it active after some round, now is reloading
+		status=TowerStatus.Passive; //make it active after some round, now is reloading
 		remainCoolingPeriod=coolingTime;
 		
 		return true;
@@ -124,7 +130,7 @@ public class Catapult extends Tower {
 		//if the tower not active, cannot attack, but still reduce the remaining cooling time, when no cooling time, active the tower
 		if(remainCoolingPeriod==0)
 		{
-			status=true;
+			status=TowerStatus.Active;
 		}
 		else
 			remainCoolingPeriod--;
@@ -134,6 +140,12 @@ public class Catapult extends Tower {
 		closestMon=null; 
 		closestMonDistance=0;
 		
+	}
+	
+	void destroy()
+	{
+		status=TowerStatus.Destroyed;
+		subMonser=null;
 	}
 
 }
