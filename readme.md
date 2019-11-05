@@ -6,7 +6,7 @@ What's been changed:
 1. Add a "slope" attribute in class Coordinate
 2. Change x and y coordinate to protected
 3. Monster (test) change remove getter of x and y coordinate
-4. entend monster to Item class
+4. extend monster to Item class
 
 Brief introduction the most important function in tower you want to use:
 1. TowerType getTowerTyper() :return tower type
@@ -15,14 +15,14 @@ Brief introduction the most important function in tower you want to use:
 4. void destroy(): destroy the current tower by changing the tower status to Destroyed
 5. boolean upgrade(): upgrade the tower (you should check recourse before)
 6. boolean attackMonster(Monster monster[], int size): At the end of current frame, you should pass the monster array and the array size to this function.
-							This function would choose the clostest monster and attack
+							This function would choose the closest monster and attack
 							(I assume monster.java would have a function call "damage(int)" for me to reduce HP on monster)
 
-7. Coordinate getGraph(): This function may helps you to plot the attack route from tower to the closter monster, it returen a Coordinate object, which contain the x, y
-			  coordinate of the cloest monster and also the slope of the straight line (for laser tower);
+7. Coordinate getGraph(): This function may helps you to plot the attack route from tower to the closest monster, it return a Coordinate object, which contain the x, y
+			  coordinate of the closest monster and also the slope of the straight line (for laser tower);
 
 
-Other initial functions (difficult tower with tiny difference):
+Other internal functions (difficult tower with tiny difference):
 
 inAttackRange(): check whether the monster in the attack range
 storeclosestMonster(): store the closest monster(s);
