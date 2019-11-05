@@ -1,3 +1,4 @@
+
 package sample;
 
 
@@ -26,6 +27,6 @@ class Coordinate {
     Coordinate(int x, int y){
         this.x = x;
         this.y = y;
-        slope = 0;
+        slope=0;
     }
 }

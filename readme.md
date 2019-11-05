@@ -1,3 +1,38 @@
+-------------------------------------------------------------------------------------------
+TOWER
+
+What's been changed:
+
+1. Add a "slope" attribute in class Coordinate
+2. Change x and y coordinate to protected
+3. Monster (test) change remove getter of x and y coordinate
+4. extend monster to Item class
+
+Brief introduction the most important function in tower you want to use:
+1. TowerType getTowerTyper() :return tower type
+2. int getCost(): return cost
+3. int getUpgrateCost(): return upgrade cost
+4. void destroy(): destroy the current tower by changing the tower status to Destroyed
+5. boolean upgrade(): upgrade the tower (you should check recourse before)
+6. boolean attackMonster(Monster monster[], int size): At the end of current frame, you should pass the monster array and the array size to this function.
+							This function would choose the closest monster and attack
+							(I assume monster.java would have a function call "damage(int)" for me to reduce HP on monster)
+
+7. Coordinate getGraph(): This function may helps you to plot the attack route from tower to the closest monster, it return a Coordinate object, which contain the x, y
+			  coordinate of the closest monster and also the slope of the straight line (for laser tower);
+
+
+Other internal functions (difficult tower with tiny difference):
+
+inAttackRange(): check whether the monster in the attack range
+storeclosestMonster(): store the closest monster(s);
+PlotLaserRoute():for laser tower only, to create a straight and match all monsters in the straight line or within 3 px of the line
+newFrame(): update the state for new frame. (ice tower not update the remaining freeze time)
+
+Monster: you should refer to this description to create your monster
+-------------------------------------------------------------------------
+
+
 # COMP3111 Project - Tower Defense
 Created by: Dr. Kevin Wang (kevinw@cse.ust.hk)
 
