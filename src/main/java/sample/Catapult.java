@@ -50,6 +50,11 @@ public class Catapult extends Tower {
 		}
 
 		inAttackRange(monster,size);
+		
+
+		if(closestMon == null) {
+        	return false;
+        }
 
 		for(int i=0;i<size;i++)
 		{

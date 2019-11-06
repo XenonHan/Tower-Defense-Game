@@ -16,7 +16,10 @@ public class BasicTower extends Tower{
             return false;
 
         inAttackRange(monster,size);
-
+        
+        if(closestMon == null) {
+        	return false;
+        }
         closestMon.damage(power);
         return true;
     }

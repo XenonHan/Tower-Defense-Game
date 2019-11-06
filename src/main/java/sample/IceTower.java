@@ -19,6 +19,10 @@ public class IceTower extends Tower {
 
 		inAttackRange(monster,size);
 
+		if(closestMon == null) {
+        	return false;
+        }
+		
 		closestMon.damage(power);
 		closestMon.slowDown(freezeTime);
 		return true;

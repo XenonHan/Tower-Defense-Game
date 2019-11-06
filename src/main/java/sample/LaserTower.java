@@ -37,20 +37,20 @@ public class LaserTower extends Tower {
 				continue;
 			}
 
-//			//within 3px also attacked
-//			distanceY=coord.pixel_Y-monster[i].coord.pixel_Y;
-//			distanceX=coord.slope*(coord.pixel_X-monster[i].coord.pixel_X);
-//
-//			if(Math.abs(distanceY-distanceX)<=3.0001)
-//			{
-//				subMons[subCounter++]=monster[i];
-//				continue;
-//			}
-//			else if(Math.abs(distanceY-distanceX)<=coord.slope*3+0.0001)
-//			{
-//				subMons[subCounter++]=monster[i];
-//				continue;
-//			}
+			//within 3px also attacked
+			distanceY=coord.pixel_Y-monster[i].coord.pixel_Y;
+			distanceX=coord.slope*(coord.pixel_X-monster[i].coord.pixel_X);
+
+			if(Math.abs(distanceY-distanceX)<=3.0001)
+			{
+				subMons[subCounter++]=monster[i];
+				continue;
+			}
+			else if(Math.abs(distanceY-distanceX)<=coord.slope*3+0.0001)
+			{
+				subMons[subCounter++]=monster[i];
+				continue;
+			}
 		}
 	}
 	boolean attackMonster(Monster monster[],int size)
@@ -58,8 +58,13 @@ public class LaserTower extends Tower {
 		if(status==TowerStatus.Passive||status==TowerStatus.Destroyed)
 			return false;
 
-
+		
 		inAttackRange(monster,size);
+
+		if(closestMon == null) {
+        	return false;
+        }
+		
 		coord.slope=(coord.pixel_Y-closestMon.coord.pixel_Y)/(coord.pixel_X-closestMon.coord.pixel_X);
 		PlotLaserRoute(monster,size);
 
