@@ -9,11 +9,16 @@ public class Monster extends Item{
 
 	int health;
 	int speed;
+	int earning;		//how much the player should be rewarded if killed this monster
 	MonsterType type;
 
-	public Monster(int x, int y)
+	public Monster(int x, int y, int health, int earning, MonsterType type)
 	{
 		super(x,y);
+		this.health = health;
+		this.earning = earning;
+		this.type = type;
+
 	}
 	
 	public void damage(int health) 
@@ -37,4 +42,13 @@ public class Monster extends Item{
 	public MonsterType getType() {
 		return type;
 	}
+
+	public void move(){
+		//incorrect move function
+		System.out.println("move");
+		int tempY = this.coord.y + 1;
+		int tempX = this.coord.x;
+		this.coord = new Coordinate(tempX, tempY);
+	}
+
 }
