@@ -2,7 +2,7 @@ package sample;
 
 
 enum TowerType{BasicTower, IceTower, Catapult,LaserTower}
-enum TowerStatus{Active, Passive, Destroyed}
+enum TowerStatus{Active, Passive}
 
 
 public abstract class Tower extends Item{
@@ -79,11 +79,6 @@ public abstract class Tower extends Item{
         closestMonDistance=0;
     }
 
-    //destroy the tower
-    void destroy()
-    {
-        status=TowerStatus.Destroyed;
-    }
 
     //for arena to plot the graph
     //Or to get the closest monster been attacked

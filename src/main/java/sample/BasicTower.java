@@ -12,7 +12,7 @@ public class BasicTower extends Tower{
 
     boolean attackMonster(Monster monster[],int size)
     {
-        if(status==TowerStatus.Passive||status==TowerStatus.Destroyed)
+        if(status==TowerStatus.Passive)
             return false;
 
         inAttackRange(monster,size);

@@ -5,7 +5,7 @@ public class LaserTower extends Tower {
 	int MAX_MONSTER=50; //you may change this, I do not know the about the arena
 	Monster[] SetOfMonster=new Monster[MAX_MONSTER];
 	Monster[] subMons=new Monster[MAX_MONSTER]; //other monster near the laser also attacked
-	int subPower=power/2;
+	int subPower=power-2;//no on the line receive less damage
 	int counter=0;
 	int subCounter=0;
 	int attackCost=3;
@@ -28,9 +28,9 @@ public class LaserTower extends Tower {
 		double distanceX;
 		for(int i=0;i<size;i++)
 		{
-			System.out.println(coord.slope);
+
 			//y-y1=m(x-x1) -> check the monster is on the line or not
-			if(coord.pixel_Y-monster[i].coord.pixel_Y-coord.slope*(coord.pixel_X-monster[i].coord.pixel_X)<0.01)//double compare
+			if(Math.abs(coord.pixel_Y-monster[i].coord.pixel_Y-coord.slope*(coord.pixel_X-monster[i].coord.pixel_X))<0.01)//double compare
 			{
 				SetOfMonster[counter]=monster[i];
 				counter++;
@@ -55,7 +55,7 @@ public class LaserTower extends Tower {
 	}
 	boolean attackMonster(Monster monster[],int size)
 	{
-		if(status==TowerStatus.Passive||status==TowerStatus.Destroyed)
+		if(status==TowerStatus.Passive)
 			return false;
 
 		
@@ -88,13 +88,7 @@ public class LaserTower extends Tower {
 		closestMonDistance=0;
 
 	}
-	void destroy()
-	{
-		status=TowerStatus.Destroyed;
-		SetOfMonster=null;
-		subMons=null;
-	}
-
+	
 	//laser cost some recourse before attack, handle by arena
 	int getAttackCost() {return attackCost;}
 

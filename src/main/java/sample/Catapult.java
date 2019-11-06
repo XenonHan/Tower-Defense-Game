@@ -8,7 +8,7 @@ public class Catapult extends Tower {
 	int counter=0;//array counter
 	int subPower=power/2; //since other monster within 25px of the closest monster also been attacked, but less power, you may change this
 
-	int coolingTime=4; //I set to 3 frame, after that, set the status to active
+	int coolingTime=3; //I set to 3 frame, after that, set the status to active
 	int remainCoolingPeriod;
 
 	public Catapult(int coodinateX, int coordinateY,int power)
@@ -29,7 +29,8 @@ public class Catapult extends Tower {
 			tempX=monster[i].coord.pixel_X;
 			tempY=monster[i].coord.pixel_Y;
 			tempRange=Math.sqrt(Math.pow((coord.pixel_X-tempX),2)+Math.pow((coord.pixel_Y-tempY),2));
-			tempClosest=Math.sqrt(Math.pow((coord.pixel_X-440),2)+Math.pow((coord.pixel_Y-0),2));
+			tempClosest=Math.sqrt(Math.pow((tempX-440),2)+Math.pow((tempY-0),2));
+
 
 			if(tempRange<range&&tempRange>50)
 			{
@@ -44,7 +45,7 @@ public class Catapult extends Tower {
 	boolean attackMonster(Monster monster[],int size)
 	{
 
-		if(status==TowerStatus.Passive||status==TowerStatus.Destroyed)
+		if(status==TowerStatus.Passive)
 		{
 			return false;
 		}
@@ -55,10 +56,10 @@ public class Catapult extends Tower {
 		if(closestMon == null) {
         	return false;
         }
-
+	
 		for(int i=0;i<size;i++)
 		{
-			if(Math.sqrt(Math.pow((closestMon.coord.pixel_X-monster[i].coord.pixel_X),2)+Math.pow((closestMon.coord.pixel_X-monster[i].coord.pixel_Y),2))<=25)
+			if(Math.abs(Math.sqrt(Math.pow((closestMon.coord.pixel_X-monster[i].coord.pixel_X),2)+Math.pow((closestMon.coord.pixel_Y-monster[i].coord.pixel_Y),2)))<=25)
 				subMonser[counter++]=monster[i];
 		}
 
@@ -99,10 +100,6 @@ public class Catapult extends Tower {
 
 	}
 
-	void destroy()
-	{
-		status=TowerStatus.Destroyed;
-		subMonser=null;
-	}
+
 
 }
