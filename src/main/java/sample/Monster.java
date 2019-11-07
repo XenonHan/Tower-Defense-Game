@@ -44,7 +44,7 @@ public class Monster extends Item{
 	}
 
 	public void move(){
-		//incorrect move function
+		//incorrect move function for testing only
 		System.out.println("move");
 		int tempY = this.coord.y + 1;
 		int tempX = this.coord.x;

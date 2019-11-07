@@ -53,8 +53,6 @@ public class MyController {
     //private ImageView monsterIcons[] = {};
     private Stack<ImageView> monsterIcons = new Stack<>();
 
-
-    private int x = -1, y = 0; //where is my monster
     /**
      * A dummy function to show how button click works
      */
@@ -68,8 +66,8 @@ public class MyController {
         //testing, it is only a sample (useless)
         Image monsterImage = new Image("file:src/main/resources/fox.png", 30, 30, true, true);
         ImageView imageView = new ImageView(monsterImage);
-        imageView.setX(2*40+5);
-        imageView.setY(2*40+5);
+        imageView.setX(6*40+5);
+        imageView.setY(6*40+5);
         paneArena.getChildren().add(imageView);
         //paneArena.getChildren().remove(imageView);
 
@@ -104,6 +102,7 @@ public class MyController {
     @FXML
     private void nextFrame(){
         arena.nextRound();                      //process next round
+        //move monster icons
         //todo clear all the monster icon
         while (!monsterIcons.empty()){
             paneArena.getChildren().remove(monsterIcons.pop());
@@ -133,6 +132,7 @@ public class MyController {
                 monsterIcons.push(imageView);
             }
         }
+
         if(arena.isGameOver()){
             System.out.println("Game Over");
             return;
@@ -360,7 +360,7 @@ class MouseEnterTowerEventHandler implements EventHandler<MouseEvent>{
     }
     @Override
     public void handle (MouseEvent event) {
-        //System.out.println("mouse over");
+        System.out.println("mouse over");
         paneArena.getChildren().add(shadedArea);
         Node infoPane = getInfoPane();
         paneArena.getChildren().add(infoPane);
@@ -389,7 +389,7 @@ class MouseExitedTowerEventHandler implements EventHandler<MouseEvent>{
 
     @Override
     public void handle (MouseEvent event) {
-        //System.out.println("mouse exit");
+        System.out.println("mouse exit");
         paneArena.getChildren().remove(shadedArea);
         paneArena.getChildren().remove(infoPane);
         event.consume();
@@ -509,9 +509,7 @@ class MouseEnterMonsterEventHandler implements EventHandler<MouseEvent>{
         //todo place the infoPane in a better way
         if(x<6){        //x = 1,2,3
             infoPane.setLayoutX((1+x) * 40);
-            if(y<6) infoPane.setLayoutY((1+y) * 40);
-
-            else infoPane.setLayoutY((y-1) * 40);
+            infoPane.setLayoutY((y+0.3) * 40);
         }
 //        else{           //x = 4, 5, 6
 //            infoPane.setLayoutX((x-1) * 40);
