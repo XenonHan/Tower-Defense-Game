@@ -2,7 +2,6 @@ package sample;
 
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Line;
-
 import java.util.Random;
 
 public class Arena {
@@ -12,12 +11,14 @@ public class Arena {
 	private int money;
 	private int turn;
 	private AnchorPane paneArena;
+	//private long time;
 
 	//todo should make back to private afterwards
 	public void generateMonster() {
 		System.out.println("monster generated");
 		Random rand = new Random();
 		Monster e;
+		//todo hp should increase as time passes
 		int hp = 10;
 		int randInt = rand.nextInt(3);
 		switch(randInt){
@@ -37,6 +38,7 @@ public class Arena {
 		money = 1000;         //initial amount of resources
 		turn = 0;
 		this.paneArena = paneArena;
+		//time = System.nanoTime();
 	}
 	public int getNumItems(){
 		return num_items;
@@ -56,8 +58,10 @@ public class Arena {
 
 	public void addItem(Item newItem) {
 		System.out.println("adding item");
-		num_items++;
-		Item temp[] = new Item[num_items];
+//		List<Item> temp = Arrays.asList(items);
+//		temp.add(newItem);
+//		items = (Item[])(temp.toArray());
+		Item temp[] = new Item[++num_items];
 		for(int i=0; i<num_items-1; i++){
 			temp[i]=items[i];
 		}
@@ -84,12 +88,6 @@ public class Arena {
 				monsterArray[numMonster++] = (Monster)items[i];
 			}
 		}
-		//todo move the monster i.e. update the new location of each monster
-		for(int i=0; i<num_items; i++){
-			if(items[i] instanceof Monster){
-				((Monster)items[i]).move();
-			}
-		}
 
 		//todo process attack
 		for(int i=0; i<num_items; i++){
@@ -102,18 +100,22 @@ public class Arena {
 				if (attackedM != null) {
 					System.out.println(t.type + " at location (" + t.coord.x + "." + t.coord.y +
 							") -> " + attackedM.getType() + " at location (" + attackedM.coord.x + "." + attackedM.coord.y +")");
-//				    int mx=400, my=400;
-//				    System.out.println(t.type + " at location (" + t.coord.x + "." + t.coord.y +
-//					    	") -> " + 1 + "at location (" + mx + "." + my + ")");
 					//todo GUI to show the attack
-					Line line = new Line(t.coord.x, t.coord.y, attackedM.coord.x, attackedM.coord.y);
-//				    Line line = new Line(t.coord.pixel_X, t.coord.pixel_Y, mx, my);
+					Line line = new Line(t.coord.pixel_X, t.coord.pixel_Y, attackedM.coord.pixel_X, attackedM.coord.pixel_Y);
 					paneArena.getChildren().add(line);
-					//paneArena.getChildren().remove(line);
+					//make some delay....
+					paneArena.getChildren().remove(line);
 				}
 				t.newFrame();
 			}
 		}
+		//todo move the monster i.e. update the new location of each monster
+		for(int i=0; i<num_items; i++){
+			if(items[i] instanceof Monster){
+				((Monster)items[i]).move();
+			}
+		}
+
 		//todo remove dead monster and collect resources
 		int earning = 0;
 		for(int i=0; i<num_items; i++){
@@ -130,51 +132,6 @@ public class Arena {
 
 		generateMonster();
 	}
-
-//	public void nextRound() {
-//		for(int i=0; i<num_items; i++){
-//			if(items[i] instanceof Tower){
-//				Tower t = (Tower)items[i];
-//				int inRangeEnemyIndex[] = new int[num_items];
-//				int numOfInRangeEnemy=0;
-//				int smallest_id = -1;
-//
-//				Coordinate fireTowerCoord = items[i].coord;
-//				for(int j=0; j<num_items; j++){
-//					if(items[j] instanceof Monster){		//check whether a monster is in range of tower
-//						Coordinate targerMonsterCoord = items[j].coord;
-//						if(t.isInRange(targerMonsterCoord)){
-//							inRangeEnemyIndex[numOfInRangeEnemy++] = j;
-//						}
-//					}
-//				}
-//
-//				if(numOfInRangeEnemy>0){							//shoot the closest enemy
-//					int distance=100;
-//					for(int k=0; k<numOfInRangeEnemy; k++){
-//						Coordinate temp = items[inRangeEnemyIndex[k]].coord;
-//						int d = Math.abs(temp.x-fireTowerCoord.x) + Math.abs(temp.y-fireTowerCoord.y);
-//						if(d < distance){
-//							distance = d;
-//							smallest_id=inRangeEnemyIndex[k];
-//						}
-//					}
-//					t.fire((Monster)items[smallest_id]);
-//				}
-//			}
-//		}
-//		//remove dead monster
-//		for(int i=0; i<num_items; i++){
-//			if(items[i] instanceof Monster){
-//				Monster m = (Monster)items[i];
-//				if(m.isDead()){
-//					removeItem(m);
-//					i--;
-//				}
-//			}
-//		}
-//		generateMonster();
-//	}
 
 	public boolean addBuilding(int towerID, int x, int y) {
 		Tower temp;
