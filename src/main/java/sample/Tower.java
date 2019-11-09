@@ -1,7 +1,7 @@
 package sample;
 
 
-enum TowerType{BasicTower, IceTower, Catapult,LaserTower}
+enum TowerType{BasicTower, IceTower, Catapult, LaserTower}
 enum TowerStatus{Active, Passive}
 
 
@@ -30,7 +30,7 @@ public abstract class Tower extends Item{
 
     }
     int getCost() {return cost;}
-    TowerType getTowerTyper() {return type;}
+    TowerType getTowerType() {return type;}
     int getUpgradeCost() {return cost/3;}//it is the cost for upgrade the tower
     int getAttackCost() {return 0;}
 
@@ -46,7 +46,7 @@ public abstract class Tower extends Item{
             tempX=monster[i].coord.pixel_X;
             tempY=monster[i].coord.pixel_Y;
             tempRange=Math.sqrt(Math.pow((coord.pixel_X-tempX),2)+Math.pow((coord.pixel_Y-tempY),2));
-            System.out.println("temp range = " + tempRange);
+            //System.out.println("temp range = " + tempRange);
             tempClosest=Math.sqrt(Math.pow((tempX-440),2)+Math.pow((tempY-0),2));
 
             if(tempRange<=range)
@@ -88,7 +88,8 @@ public abstract class Tower extends Item{
             return null;
         }
         Monster temp=closestMon;
-        temp.coord.slope=coord.slope;//store the slope btw tower and monster for laser tower;
+
+        temp.coord.slope = coord.slope;//store the slope btw tower and monster for laser tower;
         return temp;
     }
     abstract boolean upgrade(); // you should handle player's recourse in arena
