@@ -9,7 +9,7 @@ public class Catapult extends Tower {
 	//int subPower=power/2; //since other monster within 25px of the closest monster also been attacked, but less power, you may change this
 	int subPower;
 	int coolingTime=3; //I set to 3 frame, after that, set the status to active
-	int remainCoolingPeriod;
+	int remainCoolingPeriod=0;
 
 	public Catapult(int coodinateX, int coordinateY,int power)
 	{
@@ -75,13 +75,15 @@ public class Catapult extends Tower {
 		return true;
 	}
 
-	boolean upgrade()
+	void upgrade()
 	{
-		if(coolingTime==1) //I think we should not allow the ice tower without cooling, at least 1 frame, you may change this as well
-			return false;
-
-		coolingTime-=1; //I don't know, you may change
-		return true; //You need to reduce recourse in arena
+		if(coolingTime==0)
+		{//I think we should not allow the ice tower without cooling, at least 1 frame, you may change this as well
+			status=TowerStatus.Active;
+		}
+		else
+			coolingTime-=1; //I don't know, you may change
+		 //You need to reduce recourse in arena
 	}
 
 	void newFrame()

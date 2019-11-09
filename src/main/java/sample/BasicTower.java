@@ -26,10 +26,10 @@ public class BasicTower extends Tower{
 
     int costForAttack() {return 0;}
 
-    boolean upgrade()
+    void upgrade()
     {
         power+=3; //I don't know, you may change
-        return true; //You need to reduce recourse in arena
+        //You need to reduce recourse in arena
     }
 
 }
