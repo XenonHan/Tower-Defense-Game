@@ -92,7 +92,7 @@ public abstract class Tower extends Item{
         temp.coord.slope = coord.slope;//store the slope btw tower and monster for laser tower;
         return temp;
     }
-    abstract boolean upgrade(); // you should handle player's recourse in arena
+    abstract void upgrade(); // you should handle player's recourse in arena
     abstract boolean attackMonster(Monster monster[], int size);
 
 

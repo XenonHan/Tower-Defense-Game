@@ -28,10 +28,10 @@ public class IceTower extends Tower {
 		return true;
 
 	}
-	boolean upgrade()
+	void upgrade()
 	{
 		freezeTime+=3; //I don't know, you may change
-		return true; //You need to reduce recourse in arena
+		 //You need to reduce recourse in arena
 	}
 
 

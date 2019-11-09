@@ -5,7 +5,7 @@ public class LaserTower extends Tower {
     int MAX_MONSTER=50; //you may change this, I do not know the about the arena
     Monster[] SetOfMonster=new Monster[MAX_MONSTER];
     Monster[] subMons=new Monster[MAX_MONSTER]; //other monster near the laser also attacked
-    int subPower=power-2;//no on the line receive less damage
+    int subPower=0;//no on the line receive less damage
     int counter=0;
     int subCounter=0;
     int attackCost=3;
@@ -15,6 +15,7 @@ public class LaserTower extends Tower {
         //range=680 means enough to cover any monster from any rigid with 480x480px
         super(coodinateX, coordinateY, 680 , TowerType.LaserTower,20);
         this.power=power;
+        subPower=power/2;
     }
 
 
@@ -28,6 +29,10 @@ public class LaserTower extends Tower {
         double distanceX;
         for(int i=0;i<size;i++)
         {
+        	if(closestMon.coord.pixel_X-coord.pixel_X>0&&monster[i].coord.pixel_X-coord.pixel_X<=0)
+				continue;
+			else if (closestMon.coord.pixel_X-coord.pixel_X<0&&monster[i].coord.pixel_X-coord.pixel_X>=0)
+				continue;
 
             //y-y1=m(x-x1) -> check the monster is on the line or not
             if(Math.abs(coord.pixel_Y-monster[i].coord.pixel_Y-coord.slope*(coord.pixel_X-monster[i].coord.pixel_X))<0.01)//double compare
@@ -75,10 +80,10 @@ public class LaserTower extends Tower {
         return true;
     }
 
-    boolean upgrade()
+    void upgrade()
     {
         power+=2; //I don't know, you may change
-        return true; //You need to reduce recourse in arena
+        //You need to reduce recourse in arena
     }
     void newFrame()
     {
