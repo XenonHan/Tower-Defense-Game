@@ -6,8 +6,8 @@ public class Catapult extends Tower {
 	Monster[] subMonser=new Monster[MAX_MONSTER];//this array store the set of monster that within 25 px of closest monster, but cannot closer than closest monster.
 	//otherwise, I will update that monster to the closest one
 	int counter=0;//array counter
-	int subPower=power/2; //since other monster within 25px of the closest monster also been attacked, but less power, you may change this
-
+	//int subPower=power/2; //since other monster within 25px of the closest monster also been attacked, but less power, you may change this
+	int subPower;
 	int coolingTime=3; //I set to 3 frame, after that, set the status to active
 	int remainCoolingPeriod;
 
@@ -15,6 +15,7 @@ public class Catapult extends Tower {
 	{
 		super(coodinateX, coordinateY, 150, TowerType.Catapult,15);
 		this.power=power;
+		subPower = power/2;
 
 	}
 
@@ -51,12 +52,12 @@ public class Catapult extends Tower {
 		}
 
 		inAttackRange(monster,size);
-		
+
 
 		if(closestMon == null) {
-        	return false;
-        }
-	
+			return false;
+		}
+
 		for(int i=0;i<size;i++)
 		{
 			if(Math.abs(Math.sqrt(Math.pow((closestMon.coord.pixel_X-monster[i].coord.pixel_X),2)+Math.pow((closestMon.coord.pixel_Y-monster[i].coord.pixel_Y),2)))<=25)
