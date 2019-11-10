@@ -1,4 +1,4 @@
-Now, You should not direcly merge to Master banch without review by other teammates, to make sure no conflict occur 11/11/2019
+You should always create a new branch from master whenever you have updates, then merge to master only if no conflict occur
 -------------------------------------------------------------------------------------------
 TOWER
 
