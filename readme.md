@@ -1,3 +1,4 @@
+Now, You cannot direcly merge to Master banch without review by other teammates, for make sure no conflict occur 11/11/2019
 -------------------------------------------------------------------------------------------
 TOWER
 
