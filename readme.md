@@ -1,4 +1,4 @@
-You should always create a new branch from master whenever you have updates, then merge to master only if no conflict occur
+You should always create a new branch from master whenever you have updates, then merge to master by pull request only if no conflict occur
 -------------------------------------------------------------------------------------------
 TOWER
 
