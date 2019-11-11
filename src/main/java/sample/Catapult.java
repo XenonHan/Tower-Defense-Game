@@ -1,16 +1,39 @@
 package sample;
 
+/**
+ * 
+ * Catapult expend from Tower
+ *
+ */
 public class Catapult extends Tower {
 
-	int MAX_MONSTER=50; //this indicate the max. # of monster within 25 px of the closest monster to the tower
-	Monster[] subMonser=new Monster[MAX_MONSTER];//this array store the set of monster that within 25 px of closest monster, but cannot closer than closest monster.
-	//otherwise, I will update that monster to the closest one
-	int counter=0;//array counter
-	//int subPower=power/2; //since other monster within 25px of the closest monster also been attacked, but less power, you may change this
+	/**
+	 * store the monster within 25 px of the attacked monster
+	 */
+	Monster[] subMonser=new Monster[MAX_MONSTER];
+	/**
+	 * count the element in array
+	 */
+	int counter=0;
+	/**
+	 * damage for the other monster inside 25px of the target
+	 */
 	int subPower;
+	/**
+	 * reload time
+	 */
 	int coolingTime=3; //I set to 3 frame, after that, set the status to active
+	/**
+	 * remain reload time
+	 */
 	int remainCoolingPeriod=0;
 
+	/**
+	 * A constructor
+	 * @param coodinateX x coordinate
+	 * @param coordinateY y coordinate
+	 * @param power power
+	 */
 	public Catapult(int coodinateX, int coordinateY,int power)
 	{
 		super(coodinateX, coordinateY, 150, TowerType.Catapult,15);
@@ -18,12 +41,26 @@ public class Catapult extends Tower {
 		subPower = power/2;
 
 	}
-
-	void inAttackRange(Monster monster[],int size)
+	/**
+	 * In attackRange of not
+	 */
+	public void inAttackRange(Monster monster[],int size)
 	{
+		/**
+		 * temp x coordinate
+		 */
 		double tempX;
+		/**
+		 * temp y coordinate
+		 */
 		double tempY;
+		/**
+		 * temp range
+		 */
 		double tempRange;
+		/**
+		 * distance btw monster and end zone
+		 */
 		double tempClosest;
 		for(int i=0;i<size;i++)
 		{
@@ -43,7 +80,11 @@ public class Catapult extends Tower {
 	}
 
 
-	boolean attackMonster(Monster monster[],int size)
+	/**
+	 * attack monster
+	 *
+	 */
+	public boolean attackMonster(Monster monster[],int size)
 	{
 
 		if(status==TowerStatus.Passive)
@@ -75,7 +116,10 @@ public class Catapult extends Tower {
 		return true;
 	}
 
-	void upgrade()
+	/**
+	 * upgrade
+	 */
+	public void upgrade()
 	{
 		if(coolingTime==0)
 		{//I think we should not allow the ice tower without cooling, at least 1 frame, you may change this as well
@@ -86,7 +130,10 @@ public class Catapult extends Tower {
 		 //You need to reduce recourse in arena
 	}
 
-	void newFrame()
+	/**
+	 * next round
+	 */
+	public void newFrame()
 	{
 		//if the tower not active, cannot attack, but still reduce the remaining cooling time, when no cooling time, active the tower
 		if(remainCoolingPeriod==0)
