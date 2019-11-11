@@ -23,7 +23,10 @@ public class Monster extends Item{
 	
 	public void damage(int health) 
 	{
+		System.out.println("power = " + health);
+		System.out.println("before attack hp = " + this.health);
 		this.health-=health;
+		if(this.health<0) {System.out.println("get killed");}
 	}
 	
 	public void slowDown(int speed)
@@ -45,9 +48,10 @@ public class Monster extends Item{
 
 	public void move(){
 		//incorrect move function for testing only
-		System.out.println("move");
-		int tempY = this.coord.y + 1;
-		int tempX = this.coord.x;
+		//System.out.println("move");
+		double fractionOfGrid = 0.3;		//set to 2 for easy debug but actually should be smaller then 1
+		double tempY = this.coord.y + fractionOfGrid;
+		double tempX = this.coord.x;
 		this.coord = new Coordinate(tempX, tempY);
 	}
 

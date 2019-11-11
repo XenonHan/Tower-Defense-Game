@@ -122,8 +122,7 @@ public class MyController {
                 switch(monster.getType()){
                     case Fox: url = "file:src/main/resources/fox.png"; break;
                     case Penguin: url = "file:src/main/resources/penguin.png"; break;
-                    case Unicorn: url = "file:src/main/resources/unicorn.png"; break;
-                    default: throw new IllegalArgumentException("invalid type of monster");
+                    default: url = "file:src/main/resources/unicorn.png";
                 }
                 //replace the icon if the monster is already dead
                 if(monster.isDead()){
@@ -175,6 +174,9 @@ public class MyController {
         }
         paneArena.setOnMouseMoved(new MouseMovedEventHandler(paneArena, arena.getAttackGraphic()));
     }
+
+    //just for testing, should not be called in the game
+    public Label[][] getGrid(){return grids;};
 }
 
 class DragEventHandler implements EventHandler<MouseEvent> {
@@ -289,8 +291,7 @@ class DragDroppedEventHandler implements EventHandler<DragEvent> {
             case "Basic Tower": url= "file:src/main/resources/basicTower.png"; towerID=0; break;
             case "Ice Tower":  url= "file:src/main/resources/iceTower.png"; towerID=1; break;
             case "Catapult":  url= "file:src/main/resources/catapult.png"; towerID=2; break;
-            case "Laser Tower":  url= "file:src/main/resources/laserTower.png"; towerID=3; break;
-            default: throw new IllegalArgumentException("drag tower error");
+           default:  url= "file:src/main/resources/laserTower.png"; towerID=3;
         }
         Image towerImage = new Image(url, 40, 40, true, true);
         return new ImageView(towerImage);
@@ -367,8 +368,7 @@ class MouseEnterTowerEventHandler implements EventHandler<MouseEvent>{
             case Catapult: infoPane.setText(infoPane.getText()+ "\nFreeze Time: " + ((Catapult)tower).coolingTime + "\nRemain Cooldown Period: " + ((Catapult)tower).remainCoolingPeriod); break;
             case IceTower: infoPane.setText(infoPane.getText()+ "\nCool Down Time: " + ((IceTower)tower).freezeTime); break;
             case BasicTower: break;
-            case LaserTower: infoPane.setText(infoPane.getText()+ "\nMoney Consume: " + ((LaserTower)tower).attackCost); break;
-            default: throw new IllegalArgumentException();
+            default: infoPane.setText(infoPane.getText()+ "\nMoney Consume: " + ((LaserTower)tower).attackCost);
         }
         return infoPane;
     }
@@ -433,7 +433,7 @@ class MouseClickedEventHandler implements EventHandler<MouseEvent>{
         Button destroy = new Button("Destroy Tower");
         destroy.setOnAction(new DestroyActionHandler(stage, tower, arena, target));
         Button upgrade = new Button("Upgrade Tower");
-        upgrade.setOnAction(new UpgradeActionHandler(tower, arena, labelMoneyLeft));
+        upgrade.setOnAction(new UpgradeActionHandler(stage, tower, arena, labelMoneyLeft));
         btnPlatform.getChildren().add(destroy);
         btnPlatform.getChildren().add(upgrade);
 
@@ -448,11 +448,13 @@ class MouseClickedEventHandler implements EventHandler<MouseEvent>{
 }
 
 class UpgradeActionHandler implements EventHandler<ActionEvent> {
+    Stage stage;
     Tower tower;
     Arena arena;
     Label labelMoneyLeft;
 
-    UpgradeActionHandler(Tower tower, Arena arena, Label labelMoneyLeft){
+    UpgradeActionHandler(Stage stage, Tower tower, Arena arena, Label labelMoneyLeft){
+        this.stage = stage;
         this.tower = tower;
         this.arena = arena;
         this.labelMoneyLeft = labelMoneyLeft;
@@ -463,6 +465,7 @@ class UpgradeActionHandler implements EventHandler<ActionEvent> {
         arena.upgradeTower(tower);
         //update resources
         labelMoneyLeft.setText(String.valueOf(arena.getMoney()));
+        //stage.close();    //todo should uncomment this line afterward
     }
 }
 
