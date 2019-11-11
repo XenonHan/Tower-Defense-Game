@@ -1,15 +1,40 @@
 package sample;
 
+/**
+ * Laser tower class expend from Tower
+ */
 public class LaserTower extends Tower {
 
-    int MAX_MONSTER=50; //you may change this, I do not know the about the arena
+    /**
+     * monsters in the laser line
+     */
     Monster[] SetOfMonster=new Monster[MAX_MONSTER];
+    /**
+     * monster within 3px of laser line
+     */
     Monster[] subMons=new Monster[MAX_MONSTER]; //other monster near the laser also attacked
+    /**
+     * power for not hit directly
+     */
     int subPower=0;//no on the line receive less damage
+    /**
+     * array counter
+     */
     int counter=0;
+    /**
+     * another array counter
+     */
     int subCounter=0;
+    /**
+     * cost for attack
+     */
     int attackCost=3;
 
+    /**
+     * A constructor
+     * @param coodinateX x coordinate
+     * @param coordinateY y coordinate
+     */
     public LaserTower(int coodinateX, int coordinateY,int power)
     {
         //range=680 means enough to cover any monster from any rigid with 480x480px
@@ -22,10 +47,18 @@ public class LaserTower extends Tower {
 
     //You should first call the above function to produce a line equation (shortest monster to tower)
     //Then you can input all the monster to this function to check whether they are in that line
-    void PlotLaserRoute(Monster monster[],int size)
+    /**
+     * plot the laser line and use this to check whether there is any monster in the line or 3px within the line
+     */
+    private void PlotLaserRoute(Monster monster[],int size)
     {
-
+    	/**
+    	 * y difference btw monster and tower
+    	 */
         double distanceY;
+        /**
+         * x difference btw monster and tower
+         */
         double distanceX;
         for(int i=0;i<size;i++)
         {
@@ -58,7 +91,10 @@ public class LaserTower extends Tower {
             }
         }
     }
-    boolean attackMonster(Monster monster[],int size)
+    /**
+     * attack monster
+     */
+    public boolean attackMonster(Monster monster[],int size)
     {
         if(status==TowerStatus.Passive)
             return false;
@@ -80,12 +116,15 @@ public class LaserTower extends Tower {
         return true;
     }
 
-    void upgrade()
+    /**
+     * upgrade
+     */
+    public void upgrade()
     {
         power+=2; //I don't know, you may change
         //You need to reduce recourse in arena
     }
-    void newFrame()
+    public void newFrame()
     {
         counter=subCounter=0; //lazy update the two arrays
         coord.slope=0;
@@ -95,7 +134,11 @@ public class LaserTower extends Tower {
     }
 
     //laser cost some recourse before attack, handle by arena
-    int getAttackCost() {return attackCost;}
+    /**
+     * return attack cost
+     * @return attack cost
+     */
+    public int getAttackCost() {return attackCost;}
 
 
 }
