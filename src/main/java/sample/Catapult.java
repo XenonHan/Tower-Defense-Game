@@ -62,6 +62,8 @@ public class Catapult extends Tower {
 		 * distance btw monster and end zone
 		 */
 		double tempClosest;
+		if(monster==null)
+			return;
 		for(int i=0;i<size;i++)
 		{
 			tempX=monster[i].coord.pixel_X;
@@ -76,6 +78,7 @@ public class Catapult extends Tower {
 
 			}
 		}
+
 
 	}
 
@@ -101,8 +104,11 @@ public class Catapult extends Tower {
 
 		for(int i=0;i<size;i++)
 		{
+			if(monster[i]==closestMon)
+				continue;
 			if(Math.abs(Math.sqrt(Math.pow((closestMon.coord.pixel_X-monster[i].coord.pixel_X),2)+Math.pow((closestMon.coord.pixel_Y-monster[i].coord.pixel_Y),2)))<=25)
 				subMonser[counter++]=monster[i];
+			
 		}
 
 		closestMon.damage(power); //attack the target
@@ -123,7 +129,7 @@ public class Catapult extends Tower {
 	{
 		if(coolingTime==0)
 		{//I think we should not allow the ice tower without cooling, at least 1 frame, you may change this as well
-			status=TowerStatus.Active;
+			return;
 		}
 		else
 			coolingTime-=1; //I don't know, you may change
