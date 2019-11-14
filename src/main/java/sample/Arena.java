@@ -22,6 +22,11 @@ public class Arena {
 	private Stack<Shape> attackGraphic = new Stack<>();
 	private Coordinate endZone = new Coordinate(11, 0);
 	private int generate;
+	
+	/**
+	 * This is the array use to store the monster HP
+	 */
+	int []monstorHP= {15,30,50};//record the monster HP
 
 	private int getNumOfMOnsterGererate(){
 		if(turn%30 == 0){
@@ -42,24 +47,30 @@ public class Arena {
 	protected void generateMonster() {
 		Random rand = new Random();
 		Monster e;
-		int numMonsterGenerate = getNumOfMOnsterGererate();
-		//todo numMonsterGenerate should increase as time passes
-		for (int i=0; i<numMonsterGenerate; i++){
-			//todo hp should increase as time passes
-			int hp = 20;
-			hp += turn*0.4;
+		
+		
+		if(turn !=0 && turn%10==0)
+		{
+			for(int i=0;i<3;i++)
+				monstorHP[i]+=5;
+		}
+//
+//		int numMonsterGenerate = getNumOfMOnsterGererate();
+//		//todo numMonsterGenerate should increase as time passes
+//		for (int i=0; i<numMonsterGenerate; i++){
+//			todo hp should increase as time passes
 			int randInt = rand.nextInt(3);
-			int X = rand.nextInt(6);
+//			int X = rand.nextInt(6);
 			int randX[] = {0,2,4,6,8,10};
 			switch(randInt){
 				//todo implements to call correctly after Boby's work
-				case 0: e = new Monster(randX[X],0, hp, 10, MonsterType.Fox); System.out.println("Fox: " + hp + " hp generated"); break;
-				case 1: e = new Monster(randX[X],0, hp, 20, MonsterType.Penguin); System.out.println("Penguin: " + hp + " hp generated"); break;
-				case 2: e = new Monster(randX[X],0, hp, 30, MonsterType.Unicorn); System.out.println("Unicorn: " + hp + " hp generated"); break;
+				case 0: e = new Fox(monstorHP[0], 8,20); break;
+				case 1: e = new Penguin(monstorHP[1],15,10);break;
+				case 2: e = new Unicorn(monstorHP[2],10,15); break;
 				default: throw new IllegalArgumentException();
 			}
 			addItem(e);
-		}
+//		}
 	}
 
 	/**
@@ -69,7 +80,7 @@ public class Arena {
 	public Arena(AnchorPane paneArena) {
 		items = null;
 		num_items = 0;
-		money = 1000;         //initial amount of resources
+		money = 45;         //initial amount of resources
 		turn = 1;
 		this.paneArena = paneArena;
 		generate=1;
@@ -173,10 +184,10 @@ public class Arena {
 		//todo make tower
 		switch(towerID){
 			//todo default tower setting, it may change
-			case 0: temp = new BasicTower(x , y, 2); break;
+			case 0: temp = new BasicTower(x , y, 4); break;
 			case 1: temp = new IceTower(x , y, 0, 1); break;
-			case 2: temp = new Catapult(x , y, 1000); break;
-			case 3: temp = new LaserTower(x , y, 1); break;
+			case 2: temp = new Catapult(x , y, 6); break;
+			case 3: temp = new LaserTower(x , y, 8); break;
 			default: throw new IllegalArgumentException();
 		}
 		//money limit
@@ -228,7 +239,7 @@ public class Arena {
 	 * </p>
 	 */
 	public void nextRound(){
-		turn++;
+		
 		//collect monster body before process attack
 		for(int i=0; i<num_items; i++){
 			if(items[i] instanceof Monster){
@@ -334,6 +345,10 @@ public class Arena {
 			}
 		}
 		money += earning;
-		generateMonster();
+		if(turn==1||turn%3==0)//you may change if you like
+		{
+			generateMonster();
+		}
+		turn++;
 	}
 }

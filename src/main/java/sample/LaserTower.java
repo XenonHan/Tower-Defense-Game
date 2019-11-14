@@ -40,7 +40,7 @@ public class LaserTower extends Tower {
         //range=680 means enough to cover any monster from any rigid with 480x480px
         super(coodinateX, coordinateY, 680 , TowerType.LaserTower,20);
         this.power=power;
-        subPower=power/2;
+        subPower=power-2;
     }
 
 
@@ -53,19 +53,32 @@ public class LaserTower extends Tower {
     private void PlotLaserRoute(Monster monster[],int size)
     {
     	/**
-    	 * y difference btw monster and tower
+    	 * A attribute to find the distance btw line and point
     	 */
-        double distanceY;
-        /**
-         * x difference btw monster and tower
-         */
-        double distanceX;
+    	double A=0;
+    	
+    	/**
+    	 * B attribute to find the distance btw line and point
+    	 */
+    	double B=0;
+    	
+    	/**
+    	 * C attribute to find the distance btw line and point
+    	 */
+    	double C=0;
+    	/**
+    	 * distance btw a point and line
+    	 */
+    	double distance=0;
+ 
         for(int i=0;i<size;i++)
         {
         	if(closestMon.coord.pixel_X-coord.pixel_X>0&&monster[i].coord.pixel_X-coord.pixel_X<=0)
 				continue;
+
 			else if (closestMon.coord.pixel_X-coord.pixel_X<0&&monster[i].coord.pixel_X-coord.pixel_X>=0)
 				continue;
+
 
             //y-y1=m(x-x1) -> check the monster is on the line or not
             if(Math.abs(coord.pixel_Y-monster[i].coord.pixel_Y-coord.slope*(coord.pixel_X-monster[i].coord.pixel_X))<0.01)//double compare
@@ -74,21 +87,15 @@ public class LaserTower extends Tower {
                 counter++;
                 continue;
             }
+            
+            //find whether a point with 3px
+           B=1;
+           A=-coord.slope;
+           C=coord.pixel_X*coord.slope-coord.pixel_Y;
+           distance = Math.abs((A*monster[i].coord.pixel_X)+(B*monster[i].coord.pixel_Y)+C) / (A*A+B*B); //Don't ask me to prove this 
+           if(distance<=3)
+        	   subMons[subCounter++]=monster[i];
 
-            //within 3px also attacked
-            distanceY=coord.pixel_Y-monster[i].coord.pixel_Y;
-            distanceX=coord.slope*(coord.pixel_X-monster[i].coord.pixel_X);
-
-            if(Math.abs(distanceY-distanceX)<=3.0001)
-            {
-                subMons[subCounter++]=monster[i];
-                continue;
-            }
-            else if(Math.abs(distanceY-distanceX)<=coord.slope*3+0.0001)
-            {
-                subMons[subCounter++]=monster[i];
-                continue;
-            }
         }
     }
     /**
@@ -107,12 +114,17 @@ public class LaserTower extends Tower {
         }
 
         coord.slope=(coord.pixel_Y-closestMon.coord.pixel_Y)/(coord.pixel_X-closestMon.coord.pixel_X);
+
         PlotLaserRoute(monster,size);
 
         for(int i=0;i<counter;i++)
+        {
             SetOfMonster[i].damage(power);
+        }
         for(int i=0;i<subCounter;i++)
+        {
             subMons[i].damage(subPower);
+        }
         return true;
     }
 

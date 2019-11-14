@@ -122,6 +122,10 @@ public abstract class Tower extends Item{
          * distance btw monster to end zone
          */
         double tempClosest;
+        
+        if(monster==null)
+        	return;
+        
         for(int i=0;i<size;i++)
         {
             tempX=monster[i].coord.pixel_X;

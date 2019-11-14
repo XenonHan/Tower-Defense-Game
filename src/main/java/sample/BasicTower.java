@@ -37,11 +37,6 @@ public class BasicTower extends Tower{
         return true;
     }
 
-    /**
-     * 
-     * @return no cost needed
-     */
-    int costForAttack() {return 0;}
     
     /**
      * overwrite the same function base class Tower to upgrade
