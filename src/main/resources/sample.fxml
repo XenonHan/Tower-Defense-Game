@@ -62,7 +62,7 @@
                      </padding>
                   </Label>
                   <Label layoutX="17.0" layoutY="381.0" text="Money: " />
-                  <Label fx:id="labelMoneyLeft" layoutX="67.0" layoutY="381.0" text="1000" />
+                  <Label fx:id="labelMoneyLeft" layoutX="67.0" layoutY="381.0" text="45" />
                </children>
                <padding>
                   <Insets left="10.0" />

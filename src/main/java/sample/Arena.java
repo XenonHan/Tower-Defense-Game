@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -13,22 +14,42 @@ import java.util.Stack;
  * Is the arena of game, contain information about the current game state
  */
 public class Arena {
-
-	private Item items[];
-	private int num_items;
-	private int money;
-	private int turn;
-	private AnchorPane paneArena;
-	private Stack<Shape> attackGraphic = new Stack<>();
-	private Coordinate endZone = new Coordinate(11, 0);
-	private int generate;
-	
+    /**
+     * an array of Item, which contain all monsters and towers in exists in the arena
+     */
+	Item items[];
+	/**
+	 * number of items exists in the arena,
+	 */
+	int num_items;
+	/**
+	 * Indicate the amount of resources the player have
+	 */
+	int money;
+	/**
+	 * Indicate the the number game turn, initialized as 1
+	 */
+	int turn;
+	/**
+	 * Is the AnchorPane of the arena
+	 */
+	AnchorPane paneArena;
+	/**
+	 * contains all the shape(line and circle) added to the GUI in order to demonstrate tower attack
+	 */
+	Stack<Shape> attackGraphic = new Stack<>();
+	/**
+	 * define the end zone of the arena
+	 */
+	Coordinate endZone = new Coordinate(11, 0);
 	/**
 	 * This is the array use to store the monster HP
 	 */
-	int []monstorHP= {15,30,50};//record the monster HP
+	int monstorHP[]= {15,30,50};//record the monster HP
 
-	private int getNumOfMOnsterGererate(){
+	private int generate;
+
+	private int getNumOfMOnsterGenerate(){
 		if(turn%30 == 0){
 			generate++;
 		}
@@ -46,31 +67,19 @@ public class Arena {
 	 */
 	protected void generateMonster() {
 		Random rand = new Random();
+		int randInt = rand.nextInt(3);
 		Monster e;
-		
-		
-		if(turn !=0 && turn%10==0)
-		{
+		if(turn !=0 && turn%10==0) {
 			for(int i=0;i<3;i++)
 				monstorHP[i]+=5;
 		}
-//
-//		int numMonsterGenerate = getNumOfMOnsterGererate();
-//		//todo numMonsterGenerate should increase as time passes
-//		for (int i=0; i<numMonsterGenerate; i++){
-//			todo hp should increase as time passes
-			int randInt = rand.nextInt(3);
-//			int X = rand.nextInt(6);
-			int randX[] = {0,2,4,6,8,10};
-			switch(randInt){
-				//todo implements to call correctly after Boby's work
-				case 0: e = new Fox(monstorHP[0], 8,20); break;
-				case 1: e = new Penguin(monstorHP[1],15,10);break;
-				case 2: e = new Unicorn(monstorHP[2],10,15); break;
-				default: throw new IllegalArgumentException();
-			}
-			addItem(e);
-//		}
+		switch(randInt){
+			//todo implements to call correctly after Boby's work
+			case 0: e = new Fox(monstorHP[0], 8,20); break;
+			case 1: e = new Penguin(monstorHP[1],15,10);break;
+			default: e = new Unicorn(monstorHP[2],10,15);
+		}
+		addItem(e);
 	}
 
 	/**
@@ -85,27 +94,6 @@ public class Arena {
 		this.paneArena = paneArena;
 		generate=1;
 	}
-
-	/**
-	 * @return the number of items in the arena including both monsters and towers
-	 */
-	public int getNumItems(){ return num_items; }
-	/**
-	 * @return the resources (money) the player have
-	 */
-	public int getMoney() { return money; }
-
-    /**
-     * @return an array of item in the arena, include all tower and monster
-     */
-	public Item[] getItems(){ return items; }
-
-	/**
-	 * @return a stack of graphic(line and circle) that show in the GUI to indicate the tower attack
-	 */
-	public Stack<Shape> getAttackGraphic(){
-		return attackGraphic;
-	}
 	/**
 	 * check weather the player lose the game or not
 	 * @return True if lose, False if otherwise
@@ -114,8 +102,10 @@ public class Arena {
 		for(int i=0; i<num_items; i++) {
 			if(items[i] instanceof Monster){
 				Coordinate coord = items[i].coord;
-				//todo check coordinate
 				if(coord.pixel_X > endZone.pixel_X-20){
+				    String info = "Game Over ! _ ! You pass " + turn + " turn";
+					Alert loseInfo = new Alert(Alert.AlertType.INFORMATION, info);
+					loseInfo.show();
 					return true;
 				}
 			}
@@ -139,10 +129,8 @@ public class Arena {
 	 * Remove an item from the arena
 	 * @param item the item that will be remove from the arena, it can be monster or tower
 	 */
-	public void removeItem(Item item){				//remove a monster or tower from the item array
-		if(item==null){
-			throw new IllegalArgumentException();
-		}
+	public void removeItem(Item item){
+        //I assume the item must not null and its exists in the arena
 		num_items--;
 		Item temp[] = new Item[num_items];
 		for(int i=0, j=0; i<num_items+1; i++, j++){
@@ -168,9 +156,8 @@ public class Arena {
 				}
 			}
 		}
-		throw new IllegalArgumentException("No such tower");
+		return null;
 	}
-
 	/**
 	 * genarate and add a Tower to the arena
 	 * @param towerID the ID representing a type of tower 0: Basic tower 1: Ice Tower 2: Catapult 3: Laser Tower
@@ -188,7 +175,8 @@ public class Arena {
 			case 1: temp = new IceTower(x , y, 0, 1); break;
 			case 2: temp = new Catapult(x , y, 6); break;
 			case 3: temp = new LaserTower(x , y, 8); break;
-			default: throw new IllegalArgumentException();
+			default:
+                System.out.println("invalid tower ID, bug in add Tower"); return false;
 		}
 		//money limit
 		if(money-temp.getCost()<0){
@@ -206,15 +194,15 @@ public class Arena {
 	 */
 	public boolean upgradeTower(Tower t){
 		if (t == null){
-			throw new IllegalArgumentException();
+			System.out.println("should not input null to upgradeTower() method");
+			return false;
 		}
 		if(money < t.getUpgradeCost()){
 			switch (t.getTowerType()){
 				case LaserTower: System.out.println("not enough resource to upgrade Laser Tower"); break;
 				case BasicTower: System.out.println("not enough resource to upgrade Basic Tower"); break;
 				case IceTower: System.out.println("not enough resource to upgrade Ice Tower"); break;
-				case Catapult: System.out.println("Cnot enough resource to upgrade Catapult"); break;
-				default: throw new IllegalArgumentException();
+                default: System.out.println("not enough resource to upgrade Catapult");
 			}
 			return false;
 		}
@@ -222,8 +210,7 @@ public class Arena {
 			case LaserTower: System.out.println("Laser Tower is being upgraded"); break;
 			case BasicTower: System.out.println("Basic Tower is being upgraded"); break;
 			case IceTower: System.out.println("Ice Tower is being upgraded"); break;
-			case Catapult: System.out.println("Catapult is being upgraded"); break;
-			default: throw new IllegalArgumentException();
+            default: System.out.println("Catapult is being upgraded");
 		}
 		money -= t.getUpgradeCost();
 		t.upgrade();
@@ -239,7 +226,6 @@ public class Arena {
 	 * </p>
 	 */
 	public void nextRound(){
-		
 		//collect monster body before process attack
 		for(int i=0; i<num_items; i++){
 			if(items[i] instanceof Monster){
@@ -250,7 +236,6 @@ public class Arena {
 				}
 			}
 		}
-
 		int numMonster = 0;
 		Monster monsterArray[] = new Monster[num_items];
 		for(int i=0; i<num_items; i++){
@@ -258,17 +243,12 @@ public class Arena {
 				monsterArray[numMonster++] = (Monster)items[i];
 			}
 		}
-
 		//todo move the monster i.e. update the new location of each monster
 		for(int i=0; i<num_items; i++){
 			if(items[i] instanceof Monster){
-				Monster m = (Monster)(items[i]);
-				if(!m.isDead()) {
-					m.move();
-				}
+				((Monster)items[i]).move();
 			}
 		}
-
 		//todo process attack
 		for(int i=0; i<num_items; i++){
 			if(items[i] instanceof Tower){
@@ -287,12 +267,11 @@ public class Arena {
 					}
 					System.out.println(t.type + " at location (" + t.coord.x + " , " + t.coord.y +
 							") -> " + attackedM.getType() + " at location (" + attackedM.coord.x + " , " + attackedM.coord.y +")");
-					//todo GUI to show the attack
 					Line line = new Line(t.coord.pixel_X, t.coord.pixel_Y, attackedM.coord.pixel_X, attackedM.coord.pixel_Y);
 					line.setStyle("-fx-stroke: red;");
+					//draw the laser line untill the edge of the arena
 					if(t instanceof LaserTower){
 						line.setStrokeWidth(6);
-						//todo draw the laser line untill it reach the out side of the arena
 						double x = attackedM.coord.pixel_X;
 						double y = attackedM.coord.pixel_Y;
 						//not debug yet
@@ -345,10 +324,15 @@ public class Arena {
 			}
 		}
 		money += earning;
-		if(turn==1||turn%3==0)//you may change if you like
-		{
+		if(turn==1||turn%3==0){//you may change if you like
 			generateMonster();
 		}
 		turn++;
+	}
+	/**
+	 * it set the amount of money. Is for testing only, should not be called in the game
+	 */
+	public void setMoney(int money) {
+		this.money = money;
 	}
 }
