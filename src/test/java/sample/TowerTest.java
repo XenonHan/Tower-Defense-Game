@@ -50,6 +50,7 @@ public class TowerTest {
 	public void testLaserTower3() {
 		//Test whether all monster within 3px of the straight been attacked.
 		LaserTower a=new LaserTower(2,2,3);
+		a.range=250;
 		Monster[] m=new Monster[7];
 		m[0]=new Monster(15,1,MonsterType.Fox,1); m[0].coord=new Coordinate(5,5);//clostMost, use to plot straight line
 		
