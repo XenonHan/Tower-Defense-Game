@@ -168,7 +168,7 @@ public class Arena {
 		switch(towerID){
 			//todo default tower setting, it may change
 			case 0: temp = new BasicTower(x , y, 4); break;
-			case 1: temp = new IceTower(x , y, 0, 1); break;
+			case 1: temp = new IceTower(x , y, 0, 3); break;
 			case 2: temp = new Catapult(x , y, 6); break;
 			case 3: temp = new LaserTower(x , y, 8); break;
 			default:
