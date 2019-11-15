@@ -134,7 +134,8 @@ public class LaserTower extends Tower {
     public void upgrade()
     {
         power+=2; //I don't know, you may change
-        //You need to reduce recourse in arena
+        attackCost++;//You need to reduce recourse in arena
+        
     }
     public void newFrame()
     {
