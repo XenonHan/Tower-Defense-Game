@@ -255,11 +255,11 @@ public class Arena {
 						t.newFrame();
 						continue;
 					}
-					else{
-						money -= ((LaserTower) t).attackCost;
-					}
 				}
 				if(t.attackMonster(monsterArray, numMonster)){
+					if(t instanceof LaserTower){
+						money -= ((LaserTower) t).attackCost;
+					}
 					Monster attackedM = t.getGraph();
 					System.out.println(t.type + " at location (" + t.coord.x + " , " + t.coord.y +
 							") -> " + attackedM.getType() + " at location (" + attackedM.coord.x + " , " + attackedM.coord.y +")");
