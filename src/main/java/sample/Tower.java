@@ -151,7 +151,7 @@ public abstract class Tower extends Item{
      * Because to fulfill the game physics, closest monster to end zone, so straight line from start to end zone always closest
      * @param monster a specific monster
      * @param tempClosest the distance between the monster and the tower
-     * @return
+     * @return successful store or not
      */
     public boolean storeclosestMonster(Monster monster,double tempClosest)
     {

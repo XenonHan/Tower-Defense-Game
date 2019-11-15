@@ -34,6 +34,7 @@ public class LaserTower extends Tower {
      * A constructor
      * @param coodinateX x coordinate
      * @param coordinateY y coordinate
+     * @param power power of the tower
      */
     public LaserTower(int coodinateX, int coordinateY,int power)
     {
