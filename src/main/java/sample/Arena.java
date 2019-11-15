@@ -1,6 +1,5 @@
 package sample;
 
-import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -89,7 +88,7 @@ public class Arena {
 	public Arena(AnchorPane paneArena) {
 		items = null;
 		num_items = 0;
-		money = 45;         //initial amount of resources
+		money = 60;         //initial amount of resources
 		turn = 1;
 		this.paneArena = paneArena;
 		generate=1;
@@ -103,9 +102,6 @@ public class Arena {
 			if(items[i] instanceof Monster){
 				Coordinate coord = items[i].coord;
 				if(coord.pixel_X > endZone.pixel_X-20){
-				    String info = "Game Over ! _ ! You pass " + turn + " turn";
-					Alert loseInfo = new Alert(Alert.AlertType.INFORMATION, info);
-					loseInfo.show();
 					return true;
 				}
 			}
@@ -253,18 +249,18 @@ public class Arena {
 		for(int i=0; i<num_items; i++){
 			if(items[i] instanceof Tower){
 				Tower t = (Tower)items[i];
+				//if the tower is laser tower, check weather it has enough resources first before attack
+				if(t instanceof LaserTower){
+					if(money-((LaserTower) t).attackCost < 0){
+						t.newFrame();
+						continue;
+					}
+					else{
+						money -= ((LaserTower) t).attackCost;
+					}
+				}
 				if(t.attackMonster(monsterArray, numMonster)){
 					Monster attackedM = t.getGraph();
-					//if the tower is laser tower, check weather it has enough resources first
-					if(t instanceof LaserTower){
-						if(money-((LaserTower) t).attackCost < 0){
-							t.newFrame();
-							continue;
-						}
-						else{
-							money -= ((LaserTower) t).attackCost;
-						}
-					}
 					System.out.println(t.type + " at location (" + t.coord.x + " , " + t.coord.y +
 							") -> " + attackedM.getType() + " at location (" + attackedM.coord.x + " , " + attackedM.coord.y +")");
 					Line line = new Line(t.coord.pixel_X, t.coord.pixel_Y, attackedM.coord.pixel_X, attackedM.coord.pixel_Y);
@@ -324,7 +320,7 @@ public class Arena {
 			}
 		}
 		money += earning;
-		if(turn==1||turn%3==0){//you may change if you like
+		if(turn==1||turn%3==0){		//you may change if you like
 			generateMonster();
 		}
 		turn++;

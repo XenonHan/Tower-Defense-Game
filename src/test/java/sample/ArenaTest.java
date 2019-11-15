@@ -134,15 +134,13 @@ public class ArenaTest {
         Monster monster = (Monster) a.items[1];
         monster.coord = new Coordinate(10,0);
         Assert.assertFalse(a.isGameOver());
-//        monster.coord = new Coordinate(11,0);
-//        Assert.assertFalse(a.isGameOver());
-//        monster.coord = new Coordinate(11.5,0);
-//        Assert.assertFalse(a.isGameOver());
-//        //game over state
-//        monster.coord = new Coordinate(11.51,0);
-//        Assert.assertTrue(a.isGameOver());
-//        monster.coord = new Coordinate(12,0);
-//        Assert.assertTrue(a.isGameOver());
+        monster.coord = new Coordinate(10.5,0);
+        Assert.assertFalse(a.isGameOver());
+        //game over state
+        monster.coord = new Coordinate(10.6,0);
+        Assert.assertTrue(a.isGameOver());
+        monster.coord = new Coordinate(11,0);
+        Assert.assertTrue(a.isGameOver());
     }
     @Test
     public void nextRound(){

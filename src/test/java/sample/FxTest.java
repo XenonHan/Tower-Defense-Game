@@ -58,7 +58,8 @@ public class FxTest extends ApplicationTest {
 		Assert.assertFalse(grid[5][1].getGraphic() == null);
 		drag("#labelLaserTower");
 		dropTo(grid[7][3]);
-		//Assert.assertFalse(grid[7][3].getGraphic() == null);
+		Assert.assertFalse(grid[7][3].getGraphic() == null);
+
 
 		//fail add
 		drag("#labelLaserTower");
@@ -72,15 +73,15 @@ public class FxTest extends ApplicationTest {
 		moveTo(grid[5][1]);
 		moveTo(grid[7][3]);
 
-		for(int i=0; i<20; i++){
+		for(int i=0; i<200; i++){
 			clickOn("#buttonNextFrame");
 		}
 	}
 
-	@Test
-	public void showTowerInfoTest(){
-
-	}
+//	@Test
+//	public void showTowerInfoTest(){
+//
+//	}
 
 //		Assert.assertTrue();
 //		for (javafx.scene.Node i : b.getChildren()) {

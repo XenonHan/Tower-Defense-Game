@@ -4,6 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -68,6 +69,7 @@ public class MyController {
         buttonNextFrame.setDisable(false);
         buttonPlay.setDisable(true);
         setDragAndDrop();
+        labelMoneyLeft.setText(String.valueOf(arena.money));
     }
     /**
      * create the arena which consist of white and green grid
@@ -159,6 +161,9 @@ public class MyController {
             labelIceTower.setOnDragDetected(null);
             labelCatapult.setOnDragDetected(null);
             labelLaserTower.setOnDragDetected(null);
+            String info = "Game Over ! _ ! You pass " + arena.turn + " turn";
+            Alert loseInfo = new Alert(Alert.AlertType.INFORMATION, info);
+            loseInfo.show();
             return;
         }
         //update resources
