@@ -37,8 +37,7 @@ public class LaserTower extends Tower {
      */
     public LaserTower(int coodinateX, int coordinateY,int power)
     {
-        //range=680 means enough to cover any monster from any rigid with 480x480px
-        super(coodinateX, coordinateY, 680 , TowerType.LaserTower,20);
+        super(coodinateX, coordinateY, 160 , TowerType.LaserTower,20);
         this.power=power;
         subPower=power-2;
     }
