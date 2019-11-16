@@ -9,7 +9,7 @@ Han Chi Chiu (username: XenonHan): response for Tower and Monster part.
 
 LEE Tsz Leung (username: jordanleeeee): response for Arena and Monster part.
 
-HO Kin Chun (username: kchoao), N/A
+HO Kin Chun (username: kchoao), response for nothing, already waited over one month (job distributed on 8/10/2019, waited until the day of previous deadline,17/11/2019), absent from Activity 1 as well.
 
 
 Remark:
