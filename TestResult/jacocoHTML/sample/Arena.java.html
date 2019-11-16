@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Arena.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">comp3111Project</a> &gt; <a href="index.source.html" class="el_package">sample</a> &gt; <span class="el_source">Arena.java</span></div><h1>Arena.java</h1><pre class="source lang-java linenums">package sample;
+
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
+
+import java.util.Random;
+import java.util.Stack;
+
+/**
+ * Is the arena of game, contain information about the current game state
+ */
+public class Arena {
+    /**
+     * an array of Item, which contain all monsters and towers in exists in the arena
+     */
+	Item items[];
+	/**
+	 * number of items exists in the arena,
+	 */
+	int num_items;
+	/**
+	 * Indicate the amount of resources the player have
+	 */
+	int money;
+	/**
+	 * Indicate the the number game turn, initialized as 1
+	 */
+	int turn;
+	/**
+	 * Is the AnchorPane of the arena
+	 */
+	AnchorPane paneArena;
+	/**
+	 * contains all the shape(line and circle) added to the GUI in order to demonstrate tower attack
+	 */
+<span class="fc" id="L39">	Stack&lt;Shape&gt; attackGraphic = new Stack&lt;&gt;();</span>
+	/**
+	 * define the end zone of the arena
+	 */
+<span class="fc" id="L43">	Coordinate endZone = new Coordinate(11, 0);</span>
+	/**
+	 * This is the array use to store the monster HP
+	 */
+<span class="fc" id="L47">	int monstorHP[]= {15,30,50};//record the monster HP</span>
+
+	private int generate;
+
+	private int getNumOfMOnsterGenerate(){
+<span class="nc bnc" id="L52" title="All 2 branches missed.">		if(turn%30 == 0){</span>
+<span class="nc" id="L53">			generate++;</span>
+		}
+<span class="nc bnc" id="L55" title="All 2 branches missed.">		if (turn % (generate+1) &gt; 0) {</span>
+			//System.out.println(&quot;monster generated&quot;);
+<span class="nc" id="L57">			return generate;</span>
+		}
+<span class="nc" id="L59">		return 0;</span>
+        //return 20;
+	}
+	//todo should make back to private afterwards
+
+	/**
+	 * generate 0 or more number of monster in each turn
+	 */
+	protected void generateMonster() {
+<span class="fc" id="L68">		Random rand = new Random();</span>
+<span class="fc" id="L69">		int randInt = rand.nextInt(3);</span>
+		Monster e;
+<span class="pc bpc" id="L71" title="1 of 4 branches missed.">		if(turn !=0 &amp;&amp; turn%10==0) {</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">			for(int i=0;i&lt;3;i++)</span>
+<span class="fc" id="L73">				monstorHP[i]+=5;</span>
+		}
+<span class="fc bfc" id="L75" title="All 3 branches covered.">		switch(randInt){</span>
+			//todo implements to call correctly after Boby's work
+<span class="fc" id="L77">			case 0: e = new Fox(monstorHP[0], 8,20); break;</span>
+<span class="fc" id="L78">			case 1: e = new Penguin(monstorHP[1],15,10);break;</span>
+<span class="fc" id="L79">			default: e = new Unicorn(monstorHP[2],10,15);</span>
+		}
+<span class="fc" id="L81">		addItem(e);</span>
+<span class="fc" id="L82">	}</span>
+
+	/**
+	 * Create a Arena with given AnchorPane
+	 * @param paneArena AnchorPane of the game scene
+	 */
+<span class="fc" id="L88">	public Arena(AnchorPane paneArena) {</span>
+<span class="fc" id="L89">		items = null;</span>
+<span class="fc" id="L90">		num_items = 0;</span>
+<span class="fc" id="L91">		money = 60;         //initial amount of resources</span>
+<span class="fc" id="L92">		turn = 1;</span>
+<span class="fc" id="L93">		this.paneArena = paneArena;</span>
+<span class="fc" id="L94">		generate=1;</span>
+<span class="fc" id="L95">	}</span>
+	/**
+	 * check weather the player lose the game or not
+	 * @return True if lose, False if otherwise
+	 */
+	public boolean isGameOver() {
+<span class="fc bfc" id="L101" title="All 2 branches covered.">		for(int i=0; i&lt;num_items; i++) {</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">			if(items[i] instanceof Monster){</span>
+<span class="fc" id="L103">				Coordinate coord = items[i].coord;</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">				if(coord.pixel_X &gt; endZone.pixel_X-20){</span>
+<span class="fc" id="L105">					return true;</span>
+				}
+			}
+		}
+<span class="fc" id="L109">		return false;</span>
+	}
+	/**
+	 * Adding an item to the arena
+	 * @param newItem the item that will be add to the arena, it can be monster or tower
+	 */
+	private void addItem(Item newItem) {
+		//System.out.println(&quot;adding item&quot;);
+<span class="fc" id="L117">		Item temp[] = new Item[++num_items];</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">		for(int i=0; i&lt;num_items-1; i++){</span>
+<span class="fc" id="L119">			temp[i]=items[i];</span>
+		}
+<span class="fc" id="L121">		temp[num_items-1] = newItem;</span>
+<span class="fc" id="L122">		items = temp;</span>
+<span class="fc" id="L123">	}</span>
+	/**
+	 * Remove an item from the arena
+	 * @param item the item that will be remove from the arena, it can be monster or tower
+	 */
+	public void removeItem(Item item){
+        //I assume the item must not null and its exists in the arena
+<span class="fc" id="L130">		num_items--;</span>
+<span class="fc" id="L131">		Item temp[] = new Item[num_items];</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">		for(int i=0, j=0; i&lt;num_items+1; i++, j++){</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">			if(items[i]==item){</span>
+<span class="fc" id="L134">				j--;</span>
+<span class="fc" id="L135">				continue;</span>
+			}
+<span class="fc" id="L137">			temp[j] = items[i];</span>
+		}
+<span class="fc" id="L139">		items = temp;</span>
+<span class="fc" id="L140">	}</span>
+	/**
+	 * get the tower form a given green grid
+	 * @param coord the coordinate of a grid
+	 * @return the tower in given coordinate
+	 */
+	public Tower getTowerAt(Coordinate coord) {
+<span class="fc bfc" id="L147" title="All 2 branches covered.">		for(int i=0; i&lt;num_items; i++){</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">			if (items[i] instanceof Tower) {</span>
+<span class="fc" id="L149">				Coordinate c = items[i].coord;</span>
+<span class="fc bfc" id="L150" title="All 4 branches covered.">				if (coord.x == c.x &amp;&amp; coord.y == c.y) {</span>
+<span class="fc" id="L151">					return (Tower) items[i];</span>
+				}
+			}
+		}
+<span class="fc" id="L155">		return null;</span>
+	}
+	/**
+	 * genarate and add a Tower to the arena
+	 * @param towerID the ID representing a type of tower 0: Basic tower 1: Ice Tower 2: Catapult 3: Laser Tower
+	 * @param x the x coordinate that the player want the new tower to be
+	 * @param y the x coordinate that the player want the new tower to be
+	 * @return true if successfully adding the tower i.e. have enough resources to build, False if otherwise
+	 */
+	public boolean addTower(int towerID, int x, int y) {
+		Tower temp;
+		//System.out.println(&quot;building a tower&quot;);
+		//todo make tower
+<span class="fc bfc" id="L168" title="All 5 branches covered.">		switch(towerID){</span>
+			//todo default tower setting, it may change
+<span class="fc" id="L170">			case 0: temp = new BasicTower(x , y, 4); break;</span>
+<span class="fc" id="L171">			case 1: temp = new IceTower(x , y, 0, 1); break;</span>
+<span class="fc" id="L172">			case 2: temp = new Catapult(x , y, 6); break;</span>
+<span class="fc" id="L173">			case 3: temp = new LaserTower(x , y, 8); break;</span>
+			default:
+<span class="fc" id="L175">                System.out.println(&quot;invalid tower ID, bug in add Tower&quot;); return false;</span>
+		}
+		//money limit
+<span class="fc bfc" id="L178" title="All 2 branches covered.">		if(money-temp.getCost()&lt;0){</span>
+<span class="fc" id="L179">			System.out.println(&quot;not enough resource to build the tower&quot;);</span>
+<span class="fc" id="L180">			return false;</span>
+		}
+<span class="fc" id="L182">		money-=temp.getCost();</span>
+<span class="fc" id="L183">		addItem(temp);</span>
+<span class="fc" id="L184">		return true;</span>
+	}
+	/**
+	 * Perform upgrade to the tower
+	 * @param t	the tower that will receive the upgrade
+	 * @return true if update successful i.e. have enough resources to upgrade, False if otherwise
+	 */
+	public boolean upgradeTower(Tower t){
+<span class="fc bfc" id="L192" title="All 2 branches covered.">		if (t == null){</span>
+<span class="fc" id="L193">			System.out.println(&quot;should not input null to upgradeTower() method&quot;);</span>
+<span class="fc" id="L194">			return false;</span>
+		}
+<span class="fc bfc" id="L196" title="All 2 branches covered.">		if(money &lt; t.getUpgradeCost()){</span>
+<span class="fc bfc" id="L197" title="All 4 branches covered.">			switch (t.getTowerType()){</span>
+<span class="fc" id="L198">				case LaserTower: System.out.println(&quot;not enough resource to upgrade Laser Tower&quot;); break;</span>
+<span class="fc" id="L199">				case BasicTower: System.out.println(&quot;not enough resource to upgrade Basic Tower&quot;); break;</span>
+<span class="fc" id="L200">				case IceTower: System.out.println(&quot;not enough resource to upgrade Ice Tower&quot;); break;</span>
+<span class="fc" id="L201">                default: System.out.println(&quot;not enough resource to upgrade Catapult&quot;);</span>
+			}
+<span class="fc" id="L203">			return false;</span>
+		}
+<span class="fc bfc" id="L205" title="All 4 branches covered.">		switch (t.getTowerType()){</span>
+<span class="fc" id="L206">			case LaserTower: System.out.println(&quot;Laser Tower is being upgraded&quot;); break;</span>
+<span class="fc" id="L207">			case BasicTower: System.out.println(&quot;Basic Tower is being upgraded&quot;); break;</span>
+<span class="fc" id="L208">			case IceTower: System.out.println(&quot;Ice Tower is being upgraded&quot;); break;</span>
+<span class="fc" id="L209">            default: System.out.println(&quot;Catapult is being upgraded&quot;);</span>
+		}
+<span class="fc" id="L211">		money -= t.getUpgradeCost();</span>
+<span class="fc" id="L212">		t.upgrade();</span>
+<span class="fc" id="L213">		return true;</span>
+	}
+	/**
+	 * Will be called when the player press next frame
+	 * process the game to new turn.
+	 * &lt;p&gt;first remove all the dead monster. Then Monster will move.
+	 * Then pass an array of monster to each tower to
+	 * process attack, show the attack in GUI and console. After that collect resources from dead monster.
+	 * Finally generate new monster
+	 * &lt;/p&gt;
+	 */
+	public void nextRound(){
+		//collect monster body before process attack
+<span class="fc bfc" id="L226" title="All 2 branches covered.">		for(int i=0; i&lt;num_items; i++){</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">			if(items[i] instanceof Monster){</span>
+<span class="fc" id="L228">				Monster m = (Monster)items[i];</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">				if(m.isDead()){</span>
+<span class="fc" id="L230">					removeItem(m);              //remove monster</span>
+<span class="fc" id="L231">					i--;</span>
+				}
+			}
+		}
+<span class="fc" id="L235">		int numMonster = 0;</span>
+<span class="fc" id="L236">		Monster monsterArray[] = new Monster[num_items];</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">		for(int i=0; i&lt;num_items; i++){</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">			if(items[i] instanceof Monster){</span>
+<span class="fc" id="L239">				monsterArray[numMonster++] = (Monster)items[i];</span>
+			}
+		}
+		//todo move the monster i.e. update the new location of each monster
+<span class="fc bfc" id="L243" title="All 2 branches covered.">		for(int i=0; i&lt;num_items; i++){</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">			if(items[i] instanceof Monster){</span>
+<span class="fc" id="L245">				((Monster)items[i]).move();</span>
+			}
+		}
+		//todo process attack
+<span class="fc bfc" id="L249" title="All 2 branches covered.">		for(int i=0; i&lt;num_items; i++){</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">			if(items[i] instanceof Tower){</span>
+<span class="fc" id="L251">				Tower t = (Tower)items[i];</span>
+				//if the tower is laser tower, check weather it has enough resources first before attack
+<span class="fc bfc" id="L253" title="All 2 branches covered.">				if(t instanceof LaserTower){</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">					if(money-((LaserTower) t).attackCost &lt; 0){</span>
+<span class="fc" id="L255">						t.newFrame();</span>
+<span class="fc" id="L256">						continue;</span>
+					}
+				}
+<span class="fc bfc" id="L259" title="All 2 branches covered.">				if(t.attackMonster(monsterArray, numMonster)){</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">					if(t instanceof LaserTower){</span>
+<span class="fc" id="L261">						money -= ((LaserTower) t).attackCost;</span>
+					}
+<span class="fc" id="L263">					Monster attackedM = t.getGraph();</span>
+<span class="fc" id="L264">					System.out.println(t.type + &quot; at location (&quot; + t.coord.x + &quot; , &quot; + t.coord.y +</span>
+<span class="fc" id="L265">							&quot;) -&gt; &quot; + attackedM.getType() + &quot; at location (&quot; + attackedM.coord.x + &quot; , &quot; + attackedM.coord.y +&quot;)&quot;);</span>
+<span class="fc" id="L266">					Line line = new Line(t.coord.pixel_X, t.coord.pixel_Y, attackedM.coord.pixel_X, attackedM.coord.pixel_Y);</span>
+<span class="fc" id="L267">					line.setStyle(&quot;-fx-stroke: red;&quot;);</span>
+					//draw the laser line untill the edge of the arena
+<span class="fc bfc" id="L269" title="All 2 branches covered.">					if(t instanceof LaserTower){</span>
+<span class="fc" id="L270">						line.setStrokeWidth(6);</span>
+<span class="fc" id="L271">						double x = attackedM.coord.pixel_X;</span>
+<span class="fc" id="L272">						double y = attackedM.coord.pixel_Y;</span>
+						//not debug yet
+						//Monster is on LHS of tower
+<span class="fc bfc" id="L275" title="All 2 branches covered.">						if(attackedM.coord.pixel_X&lt;t.coord.pixel_X){</span>
+<span class="pc bpc" id="L276" title="1 of 6 branches missed.">							while (x&gt;0 &amp;&amp; y&lt;480 &amp;&amp; y&gt;0){</span>
+<span class="fc" id="L277">								x--;</span>
+<span class="fc" id="L278">								y -= attackedM.coord.slope;</span>
+							}
+						}
+						//Monster is on RHS of tower
+<span class="fc bfc" id="L282" title="All 2 branches covered.">						if(attackedM.coord.pixel_X&gt;t.coord.pixel_X){</span>
+<span class="pc bpc" id="L283" title="1 of 6 branches missed.">							while (x&lt;480 &amp;&amp; y&lt;480 &amp;&amp; y&gt;0){</span>
+<span class="fc" id="L284">								x++;</span>
+<span class="fc" id="L285">								y += attackedM.coord.slope;</span>
+							}
+						}
+						//Monster is exactly below the tower
+<span class="pc bpc" id="L289" title="3 of 4 branches missed.">						if (attackedM.coord.pixel_X == t.coord.pixel_X &amp;&amp; attackedM.coord.pixel_Y &gt; t.coord.pixel_Y) {</span>
+<span class="nc" id="L290">							y = 480;</span>
+						}
+						//Monster is exactly on top of the tower
+<span class="pc bpc" id="L293" title="3 of 4 branches missed.">						if (attackedM.coord.pixel_X == t.coord.pixel_X &amp;&amp; attackedM.coord.pixel_Y &lt; t.coord.pixel_Y) {</span>
+<span class="nc" id="L294">							y = 0;</span>
+						}
+<span class="fc" id="L296">						line.setEndX(x);</span>
+<span class="fc" id="L297">						line.setEndY(y);</span>
+					}
+<span class="fc bfc" id="L299" title="All 2 branches covered.">					if(t instanceof Catapult){</span>
+<span class="fc" id="L300">                        Circle dot = new Circle(attackedM.coord.pixel_X, attackedM.coord.pixel_Y,25);</span>
+<span class="fc" id="L301">                        dot.setFill(Color.RED);</span>
+<span class="fc" id="L302">                        dot.setOpacity(0.5);</span>
+<span class="fc" id="L303">                        paneArena.getChildren().add(dot);</span>
+<span class="fc" id="L304">                        attackGraphic.push(dot);</span>
+                    }
+<span class="fc" id="L306">					attackGraphic.push(line);</span>
+<span class="fc" id="L307">					paneArena.getChildren().add(line);</span>
+				}
+<span class="fc" id="L309">				t.newFrame();</span>
+			}
+		}
+		//collect resources diu to monster dead
+<span class="fc" id="L313">		int earning = 0;</span>
+<span class="fc bfc" id="L314" title="All 2 branches covered.">		for(int i=0; i&lt;num_items; i++){</span>
+<span class="fc bfc" id="L315" title="All 2 branches covered.">			if(items[i] instanceof Monster){</span>
+<span class="fc" id="L316">				Monster m = (Monster)items[i];</span>
+<span class="fc bfc" id="L317" title="All 2 branches covered.">				if(m.isDead()){</span>
+<span class="fc" id="L318">					earning += m.earning;</span>
+				}
+			}
+		}
+<span class="fc" id="L322">		money += earning;</span>
+<span class="fc bfc" id="L323" title="All 4 branches covered.">		if(turn==1||turn%3==0){		//you may change if you like</span>
+<span class="fc" id="L324">			generateMonster();</span>
+		}
+<span class="fc" id="L326">		turn++;</span>
+<span class="fc" id="L327">	}</span>
+	/**
+	 * it set the amount of money. Is for testing only, should not be called in the game
+	 */
+	public void setMoney(int money) {
+<span class="fc" id="L332">		this.money = money;</span>
+<span class="fc" id="L333">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

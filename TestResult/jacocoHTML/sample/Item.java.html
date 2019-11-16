@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Item.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">comp3111Project</a> &gt; <a href="index.source.html" class="el_package">sample</a> &gt; <span class="el_source">Item.java</span></div><h1>Item.java</h1><pre class="source lang-java linenums">package sample;
+
+/**
+ * Is the base class of Monster and Tower class, it contain information about coordinate
+ * &lt;p&gt;i.e. where it tower or monster locate&lt;/p&gt;
+ */
+public class Item {
+    protected Coordinate coord;
+
+<span class="fc" id="L10">    public Item(double x, double y){</span>
+<span class="fc" id="L11">        coord = new Coordinate(x,y);</span>
+<span class="fc" id="L12">    }</span>
+}
+
+/**
+ *Is the class representing location
+ */
+class Coordinate {
+    //0&lt; x &lt; 13  &amp;&amp; 0&lt; y &lt; 13
+    //the coordinate of grid
+    public double x;
+    public double y;
+    //convert grid to pixel
+    public double pixel_X;
+    public double pixel_Y;
+    //only controller will use that info
+    public double img_X;
+    public double img_Y;
+    //slope info is the slope between monster and tower
+    public double slope;
+
+    /**
+     * Construct an Coordinate object
+     * @param x x coordinate of the grid
+     * @param y y coordinate of the grid
+     */
+<span class="fc" id="L37">    Coordinate(double x, double y){</span>
+<span class="fc" id="L38">        this.x = x;</span>
+<span class="fc" id="L39">        this.y = y;</span>
+<span class="fc" id="L40">        pixel_X = x*40 + 20;</span>
+<span class="fc" id="L41">        pixel_Y = y*40 + 20;</span>
+<span class="fc" id="L42">        img_X = x*40+5;</span>
+<span class="fc" id="L43">        img_Y = y*40+5;</span>
+<span class="fc" id="L44">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

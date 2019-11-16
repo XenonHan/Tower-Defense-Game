@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Catapult.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">comp3111Project</a> &gt; <a href="index.source.html" class="el_package">sample</a> &gt; <span class="el_source">Catapult.java</span></div><h1>Catapult.java</h1><pre class="source lang-java linenums">package sample;
+
+/**
+ * 
+ * Catapult expend from Tower
+ *
+ */
+public class Catapult extends Tower {
+
+	/**
+	 * store the monster within 25 px of the attacked monster
+	 */
+<span class="fc" id="L13">	Monster[] subMonser=new Monster[MAX_MONSTER];</span>
+	/**
+	 * count the element in array
+	 */
+<span class="fc" id="L17">	int counter=0;</span>
+	/**
+	 * damage for the other monster inside 25px of the target
+	 */
+	int subPower;
+	/**
+	 * reload time
+	 */
+<span class="fc" id="L25">	int coolingTime=3; //I set to 3 frame, after that, set the status to active</span>
+	/**
+	 * remain reload time
+	 */
+<span class="fc" id="L29">	int remainCoolingPeriod=0;</span>
+
+	/**
+	 * A constructor
+	 * @param coodinateX x coordinate
+	 * @param coordinateY y coordinate
+	 * @param power power
+	 */
+	public Catapult(int coodinateX, int coordinateY,int power)
+	{
+<span class="fc" id="L39">		super(coodinateX, coordinateY, 150, TowerType.Catapult,15);</span>
+<span class="fc" id="L40">		this.power=power;</span>
+<span class="fc" id="L41">		subPower = power/2;</span>
+
+<span class="fc" id="L43">	}</span>
+	/**
+	 * In attackRange of not
+	 */
+	public void inAttackRange(Monster monster[],int size)
+	{
+		/**
+		 * temp x coordinate
+		 */
+		double tempX;
+		/**
+		 * temp y coordinate
+		 */
+		double tempY;
+		/**
+		 * temp range
+		 */
+		double tempRange;
+		/**
+		 * distance btw monster and end zone
+		 */
+		double tempClosest;
+<span class="fc bfc" id="L65" title="All 2 branches covered.">		if(monster==null)</span>
+<span class="fc" id="L66">			return;</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">		for(int i=0;i&lt;size;i++)</span>
+		{
+<span class="fc" id="L69">			tempX=monster[i].coord.pixel_X;</span>
+<span class="fc" id="L70">			tempY=monster[i].coord.pixel_Y;</span>
+<span class="fc" id="L71">			tempRange=Math.sqrt(Math.pow((coord.pixel_X-tempX),2)+Math.pow((coord.pixel_Y-tempY),2));</span>
+<span class="fc" id="L72">			tempClosest=Math.sqrt(Math.pow((tempX-440),2)+Math.pow((tempY-0),2));</span>
+
+
+<span class="fc bfc" id="L75" title="All 4 branches covered.">			if(tempRange&lt;range&amp;&amp;tempRange&gt;50)</span>
+			{
+<span class="fc" id="L77">				storeclosestMonster(monster[i],tempClosest);</span>
+
+			}
+		}
+
+
+<span class="fc" id="L83">	}</span>
+
+
+	/**
+	 * attack monster
+	 *
+	 */
+	public boolean attackMonster(Monster monster[],int size)
+	{
+
+<span class="fc bfc" id="L93" title="All 2 branches covered.">		if(status==TowerStatus.Passive)</span>
+		{
+<span class="fc" id="L95">			return false;</span>
+		}
+
+<span class="fc" id="L98">		inAttackRange(monster,size);</span>
+
+
+<span class="fc bfc" id="L101" title="All 2 branches covered.">		if(closestMon == null) {</span>
+<span class="fc" id="L102">			return false;</span>
+		}
+
+<span class="fc bfc" id="L105" title="All 2 branches covered.">		for(int i=0;i&lt;size;i++)</span>
+		{
+<span class="fc bfc" id="L107" title="All 2 branches covered.">			if(monster[i]==closestMon)</span>
+<span class="fc" id="L108">				continue;</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">			if(Math.abs(Math.sqrt(Math.pow((closestMon.coord.pixel_X-monster[i].coord.pixel_X),2)+Math.pow((closestMon.coord.pixel_Y-monster[i].coord.pixel_Y),2)))&lt;=25)</span>
+<span class="fc" id="L110">				subMonser[counter++]=monster[i];</span>
+			
+		}
+
+<span class="fc" id="L114">		closestMon.damage(power); //attack the target</span>
+
+<span class="fc bfc" id="L116" title="All 2 branches covered.">		for(int i=0;i&lt;counter;i++)// attack other within 25 px of the target</span>
+<span class="fc" id="L117">			subMonser[i].damage(subPower);</span>
+
+<span class="fc" id="L119">		status=TowerStatus.Passive; //make it active after some round, now is reloading</span>
+<span class="fc" id="L120">		remainCoolingPeriod=coolingTime;</span>
+
+<span class="fc" id="L122">		return true;</span>
+	}
+
+	/**
+	 * upgrade
+	 */
+	public void upgrade()
+	{
+<span class="fc bfc" id="L130" title="All 2 branches covered.">		if(coolingTime==0)</span>
+		{//I think we should not allow the ice tower without cooling, at least 1 frame, you may change this as well
+<span class="fc" id="L132">			return;</span>
+		}
+		else
+<span class="fc" id="L135">			coolingTime-=1; //I don't know, you may change</span>
+		 //You need to reduce recourse in arena
+<span class="fc" id="L137">	}</span>
+
+	/**
+	 * next round
+	 */
+	public void newFrame()
+	{
+		//if the tower not active, cannot attack, but still reduce the remaining cooling time, when no cooling time, active the tower
+<span class="fc bfc" id="L145" title="All 2 branches covered.">		if(remainCoolingPeriod==0)</span>
+		{
+<span class="fc" id="L147">			status=TowerStatus.Active;</span>
+		}
+		else
+<span class="fc" id="L150">			remainCoolingPeriod--;</span>
+
+<span class="fc" id="L152">		counter=0; //lazy update the array</span>
+
+<span class="fc" id="L154">		closestMon=null;</span>
+<span class="fc" id="L155">		closestMonDistance=0;</span>
+
+<span class="fc" id="L157">	}</span>
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

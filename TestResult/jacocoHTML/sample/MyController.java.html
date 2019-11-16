@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MyController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">comp3111Project</a> &gt; <a href="index.source.html" class="el_package">sample</a> &gt; <span class="el_source">MyController.java</span></div><h1>MyController.java</h1><pre class="source lang-java linenums">package sample;
+
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.*;
+import javafx.event.*;
+import javafx.fxml.FXML;
+import javafx.scene.layout.*;
+import javafx.geometry.Insets;
+import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
+import java.util.Stack;
+
+/**
+ * Construction the Arena, process all the mouse event perform by the player
+ */
+<span class="fc" id="L28">public class MyController {</span>
+    @FXML
+    private Button buttonNextFrame;
+    @FXML
+    private Button buttonSimulate;
+    @FXML
+    private Button buttonPlay;
+    @FXML
+    private AnchorPane paneArena;
+    @FXML
+    private Label labelBasicTower;
+    @FXML
+    private Label labelIceTower;
+    @FXML
+    private Label labelCatapult;
+    @FXML
+    private Label labelLaserTower;
+    @FXML
+    private Label labelMoneyLeft;
+
+    private static final int ARENA_WIDTH = 480;
+    private static final int ARENA_HEIGHT = 480;
+    private static final int GRID_WIDTH = 40;
+    private static final int GRID_HEIGHT = 40;
+    private static final int MAX_H_NUM_GRID = 12;
+    private static final int MAX_V_NUM_GRID = 12;
+
+<span class="fc" id="L55">    private Label grids[][] = new Label[MAX_V_NUM_GRID][MAX_H_NUM_GRID]; //the grids on arena</span>
+    /**
+     * the arena that the controller will take control of
+     */
+<span class="fc" id="L59">    Arena arena = null;</span>
+<span class="fc" id="L60">    private Stack&lt;ImageView&gt; monsterIcons = new Stack&lt;&gt;();</span>
+
+    /**
+     * will be call when the player press the play button
+     * &lt;p&gt;enable the next frame button and set the drag and drop event&lt;/p&gt;
+     */
+    @FXML
+    private void play(){
+<span class="fc" id="L68">        System.out.println(&quot;Game Start&quot;);</span>
+<span class="fc" id="L69">        buttonNextFrame.setDisable(false);</span>
+<span class="fc" id="L70">        buttonPlay.setDisable(true);</span>
+<span class="fc" id="L71">        setDragAndDrop();</span>
+<span class="fc" id="L72">        labelMoneyLeft.setText(String.valueOf(arena.money));</span>
+<span class="fc" id="L73">    }</span>
+    /**
+     * create the arena which consist of white and green grid
+     */
+    @FXML
+    public void createArena() {
+<span class="fc" id="L79">        buttonNextFrame.setDisable(true);</span>
+<span class="fc" id="L80">        buttonSimulate.setDisable(true);</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">        if (grids[0][0] != null)</span>
+<span class="nc" id="L82">            return; //created already</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        for (int i = 0; i &lt; MAX_V_NUM_GRID; i++) {</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            for (int j = 0; j &lt; MAX_H_NUM_GRID; j++) {</span>
+<span class="fc" id="L85">                Label newLabel = new Label();</span>
+<span class="fc bfc" id="L86" title="All 4 branches covered.">                if (j % 2 == 0 || i == ((j + 1) / 2 % 2) * (MAX_V_NUM_GRID - 1)) {</span>
+<span class="fc" id="L87">                    newLabel.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));</span>
+                }
+                else {
+<span class="fc" id="L90">                    newLabel.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));</span>
+                }
+<span class="fc" id="L92">                newLabel.setLayoutX(j * GRID_WIDTH);</span>
+<span class="fc" id="L93">                newLabel.setLayoutY(i * GRID_HEIGHT);</span>
+<span class="fc" id="L94">                newLabel.setMinWidth(GRID_WIDTH);</span>
+<span class="fc" id="L95">                newLabel.setMaxWidth(GRID_WIDTH);</span>
+<span class="fc" id="L96">                newLabel.setMinHeight(GRID_HEIGHT);</span>
+<span class="fc" id="L97">                newLabel.setMaxHeight(GRID_HEIGHT);</span>
+<span class="fc" id="L98">                newLabel.setStyle(&quot;-fx-border-color: black;&quot;);</span>
+<span class="fc" id="L99">                grids[i][j] = newLabel;</span>
+<span class="fc" id="L100">                paneArena.getChildren().addAll(newLabel);</span>
+<span class="fc" id="L101">                arena = new Arena(paneArena);</span>
+            }
+        }
+<span class="fc" id="L104">        Node endZone = new ImageView(new Image(&quot;file:src/main/resources/endZone.jpg&quot;, 35, 35, true, true));</span>
+<span class="fc" id="L105">        Node startZone = new ImageView(new Image(&quot;file:src/main/resources/startZone.png&quot;, 35, 35, true, true));</span>
+<span class="fc" id="L106">        grids[0][0].setGraphic(startZone);</span>
+<span class="fc" id="L107">        grids[0][0].setAlignment(Pos.CENTER);</span>
+<span class="fc" id="L108">        grids[0][11].setGraphic(endZone);</span>
+<span class="fc" id="L109">        grids[0][11].setAlignment(Pos.CENTER);</span>
+<span class="fc" id="L110">    }</span>
+
+    /**
+     * process the next frame option
+     * &lt;p&gt;remove all the graphic that show the tower attack, then process next round&lt;/p&gt;
+     * &lt;p&gt;then place monster icon in updated location&lt;/p&gt;
+     * &lt;p&gt;check if is game over if yes, stop the game, else update resources&lt;/p&gt;
+     */
+    @FXML
+    private void nextFrame(){
+        //clear the attack line
+<span class="fc" id="L121">        clearGraphic();</span>
+
+<span class="fc" id="L123">        arena.nextRound();                      //process next round</span>
+        //move monster icons
+        //first clear all the monster icon
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        while (!monsterIcons.empty()){</span>
+<span class="fc" id="L127">            paneArena.getChildren().remove(monsterIcons.pop());</span>
+        }
+        //then place monster in updated location
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        for(int i=0; i&lt;arena.num_items; i++){</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">            if((arena.items)[i] instanceof Monster){</span>
+<span class="fc" id="L132">                Monster monster = (Monster)((arena.items)[i]);</span>
+                String url;
+<span class="fc bfc" id="L134" title="All 3 branches covered.">                switch(monster.getType()){</span>
+<span class="fc" id="L135">                    case Fox: url = &quot;file:src/main/resources/fox.png&quot;; break;</span>
+<span class="fc" id="L136">                    case Penguin: url = &quot;file:src/main/resources/penguin.png&quot;; break;</span>
+<span class="fc" id="L137">                    default: url = &quot;file:src/main/resources/unicorn.png&quot;;</span>
+                }
+                //replace the icon if the monster is already dead
+<span class="fc bfc" id="L140" title="All 2 branches covered.">                if(monster.isDead()){</span>
+<span class="fc" id="L141">                    url = &quot;file:src/main/resources/collision.png&quot;;</span>
+                }
+<span class="fc" id="L143">                Image monsterImage = new Image(url, 30, 30, true, true);</span>
+<span class="fc" id="L144">                ImageView imageView = new ImageView(monsterImage);</span>
+<span class="fc" id="L145">                imageView.setX(monster.coord.img_X);</span>
+<span class="fc" id="L146">                imageView.setY(monster.coord.img_Y);</span>
+<span class="fc" id="L147">                paneArena.getChildren().add(imageView);</span>
+                //add event handler if the monster is not dead yet
+<span class="fc bfc" id="L149" title="All 2 branches covered.">                if (!monster.isDead()) {</span>
+<span class="fc" id="L150">                    MouseExitedMonsterEventHandler exitEvent = new MouseExitedMonsterEventHandler(paneArena);</span>
+<span class="fc" id="L151">                    imageView.setOnMouseEntered(new MouseEnterMonsterEventHandler(paneArena, monster, exitEvent));</span>
+<span class="fc" id="L152">                    imageView.setOnMouseExited(exitEvent);</span>
+                }
+<span class="fc" id="L154">                monsterIcons.push(imageView);</span>
+            }
+        }
+<span class="fc bfc" id="L157" title="All 2 branches covered.">        if(arena.isGameOver()){</span>
+<span class="fc" id="L158">            System.out.println(&quot;Game Over&quot;);</span>
+<span class="fc" id="L159">            buttonNextFrame.setDisable(true);</span>
+<span class="fc" id="L160">            labelBasicTower.setOnDragDetected(null);</span>
+<span class="fc" id="L161">            labelIceTower.setOnDragDetected(null);</span>
+<span class="fc" id="L162">            labelCatapult.setOnDragDetected(null);</span>
+<span class="fc" id="L163">            labelLaserTower.setOnDragDetected(null);</span>
+<span class="fc" id="L164">            String info = &quot;Game Over ! _ ! You pass &quot; + arena.turn + &quot; turn&quot;;</span>
+<span class="fc" id="L165">            Alert loseInfo = new Alert(Alert.AlertType.INFORMATION, info);</span>
+<span class="fc" id="L166">            loseInfo.show();</span>
+<span class="fc" id="L167">            return;</span>
+        }
+        //update resources
+<span class="fc" id="L170">        labelMoneyLeft.setText(String.valueOf(arena.money));</span>
+<span class="fc" id="L171">    }</span>
+
+    private void setDragAndDrop() {
+<span class="fc" id="L174">        labelBasicTower.setOnDragDetected(new DragEventHandler(labelBasicTower));</span>
+<span class="fc" id="L175">        labelIceTower.setOnDragDetected(new DragEventHandler(labelIceTower));</span>
+<span class="fc" id="L176">        labelCatapult.setOnDragDetected(new DragEventHandler(labelCatapult));</span>
+<span class="fc" id="L177">        labelLaserTower.setOnDragDetected(new DragEventHandler(labelLaserTower));</span>
+
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        for (int i = 0; i &lt; MAX_V_NUM_GRID; i++) {</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">            for (int j = 0; j &lt; MAX_H_NUM_GRID; j++) {</span>
+<span class="fc bfc" id="L181" title="All 4 branches covered.">                if (!(j % 2 == 0 || i == ((j + 1) / 2 % 2) * (MAX_V_NUM_GRID - 1))) {   //those are green grid</span>
+<span class="fc" id="L182">                    Label target = grids[i][j];</span>
+<span class="fc" id="L183">                    target.setOnDragDropped(new DragDroppedEventHandler(target, j, i, arena, labelMoneyLeft, paneArena));</span>
+<span class="fc" id="L184">                    target.setOnDragOver(new DragOverEventHandler(target));</span>
+<span class="fc" id="L185">                    target.setOnDragEntered(new DragEnteredEventHandler(target));</span>
+<span class="fc" id="L186">                    target.setOnDragExited(new DragExitedEventHandler(target));</span>
+                }
+            }
+        }
+<span class="fc" id="L190">        paneArena.setOnMouseMoved(e-&gt; clearGraphic());</span>
+<span class="fc" id="L191">    }</span>
+    private void clearGraphic(){
+<span class="fc bfc" id="L193" title="All 2 branches covered.">        while(!arena.attackGraphic.empty()){</span>
+            //System.out.println(&quot;line clear&quot;);
+<span class="fc" id="L195">            paneArena.getChildren().remove(arena.attackGraphic.pop());</span>
+        }
+<span class="fc" id="L197">    }</span>
+
+    //just for testing, should not be called in the game
+<span class="fc" id="L200">    public Label[][] getGrid(){return grids;};</span>
+}
+
+class DragEventHandler implements EventHandler&lt;MouseEvent&gt; {
+    private Label source;
+
+<span class="fc" id="L206">    public DragEventHandler(Label e) {</span>
+<span class="fc" id="L207">        source = e;</span>
+<span class="fc" id="L208">    }</span>
+    @Override
+    public void handle (MouseEvent event) {
+        //System.out.println(&quot;Draging a &quot; + source.getText());
+<span class="fc" id="L212">        Dragboard db = source.startDragAndDrop(TransferMode.ANY);</span>
+<span class="fc" id="L213">        ClipboardContent content = new ClipboardContent();</span>
+<span class="fc" id="L214">        content.putString(source.getText());</span>
+<span class="fc" id="L215">        db.setContent(content);</span>
+
+<span class="fc" id="L217">        event.consume();</span>
+<span class="fc" id="L218">    }</span>
+}
+
+class DragOverEventHandler implements EventHandler&lt;DragEvent&gt; {
+    private Label target;
+
+<span class="fc" id="L224">    public DragOverEventHandler(Label target){</span>
+<span class="fc" id="L225">        this.target = target;</span>
+<span class="fc" id="L226">    }</span>
+    @Override
+    public void handle(DragEvent event) {
+        /* data is dragged over the target */
+        //System.out.println(&quot;onDragOver&quot;);
+
+        /* accept it only if it is  not dragged from the same node
+         * and if it has a string data */
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">        if (event.getGestureSource() != target &amp;&amp;</span>
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">                event.getDragboard().hasString()) {</span>
+            /* allow for both copying and moving, whatever user chooses */
+<span class="fc" id="L237">            event.acceptTransferModes(TransferMode.COPY_OR_MOVE);</span>
+        }
+<span class="fc" id="L239">        event.consume();</span>
+<span class="fc" id="L240">    }</span>
+}
+
+class DragEnteredEventHandler implements EventHandler&lt;DragEvent&gt; {
+    private Label target;
+
+<span class="fc" id="L246">    public DragEnteredEventHandler(Label target){</span>
+<span class="fc" id="L247">        this.target = target;</span>
+<span class="fc" id="L248">    }</span>
+    @Override
+    public void handle(DragEvent event) {
+        /* the drag-and-drop gesture entered the target */
+        //System.out.println(&quot;onDragEntered&quot;);
+        /* show to the user that it is an actual gesture target */
+<span class="pc bpc" id="L254" title="1 of 2 branches missed.">        if (event.getGestureSource() != target &amp;&amp;</span>
+<span class="pc bpc" id="L255" title="1 of 2 branches missed.">                event.getDragboard().hasString()) {</span>
+<span class="fc" id="L256">            target.setStyle(&quot;-fx-border-color: blue;&quot;);</span>
+        }
+
+<span class="fc" id="L259">        event.consume();</span>
+<span class="fc" id="L260">    }</span>
+}
+
+class DragExitedEventHandler implements EventHandler&lt;DragEvent&gt; {
+    private Label target;
+
+<span class="fc" id="L266">    public DragExitedEventHandler(Label target){</span>
+<span class="fc" id="L267">        this.target = target;</span>
+<span class="fc" id="L268">    }</span>
+    @Override
+    public void handle(DragEvent event) {
+<span class="fc" id="L271">        target.setStyle(&quot;-fx-border-color: black;&quot;);</span>
+        //System.out.println(&quot;Exit&quot;);
+<span class="fc" id="L273">        event.consume();</span>
+<span class="fc" id="L274">    }</span>
+}
+
+//the following event handler class is added by me
+class DragDroppedEventHandler implements EventHandler&lt;DragEvent&gt; {
+    private Label target;
+    private int x;
+    private int y;
+    private Label labelMoneyLeft;
+    private Arena arena;
+    private AnchorPane paneArena;
+    private Tower tower;
+    private int towerID;
+
+<span class="fc" id="L288">    DragDroppedEventHandler(Label target , int x, int y, Arena arena, Label labelMoneyLeft, AnchorPane paneArena){</span>
+<span class="fc" id="L289">        this.target = target;</span>
+<span class="fc" id="L290">        this.x = x;</span>
+<span class="fc" id="L291">        this.y = y;</span>
+<span class="fc" id="L292">        this.labelMoneyLeft = labelMoneyLeft;</span>
+<span class="fc" id="L293">        this.arena = arena;</span>
+<span class="fc" id="L294">        this.paneArena = paneArena;</span>
+<span class="fc" id="L295">        tower = null;</span>
+<span class="fc" id="L296">        towerID = -1;</span>
+<span class="fc" id="L297">    }</span>
+    private Circle generateShadedRegion(){
+<span class="fc" id="L299">        Circle shadedArea = new Circle();</span>
+<span class="fc" id="L300">        shadedArea.setCenterX(x*40 + 20);</span>
+<span class="fc" id="L301">        shadedArea.setCenterY(y*40 + 20);</span>
+<span class="fc" id="L302">        shadedArea.setRadius(tower.range);</span>
+<span class="fc" id="L303">        shadedArea.setFill(Color.RED);</span>
+<span class="fc" id="L304">        shadedArea.setOpacity(0.4);</span>
+<span class="fc bfc" id="L305" title="All 2 branches covered.">        if(tower instanceof Catapult){</span>
+<span class="fc" id="L306">            shadedArea.setRadius(100);</span>
+<span class="fc" id="L307">            shadedArea.setStroke(Color.RED);</span>
+<span class="fc" id="L308">            shadedArea.setStrokeWidth(100);</span>
+<span class="fc" id="L309">            shadedArea.setFill(null);</span>
+        }
+<span class="fc" id="L311">        return shadedArea;</span>
+    }
+    private Node getTowerIcon(Dragboard db){
+        String url;
+<span class="fc bfc" id="L315" title="All 4 branches covered.">        switch (db.getString()){</span>
+<span class="fc" id="L316">            case &quot;Basic Tower&quot;: url= &quot;file:src/main/resources/basicTower.png&quot;; towerID=0; break;</span>
+<span class="fc" id="L317">            case &quot;Ice Tower&quot;:  url= &quot;file:src/main/resources/iceTower.png&quot;; towerID=1; break;</span>
+<span class="fc" id="L318">            case &quot;Catapult&quot;:  url= &quot;file:src/main/resources/catapult.png&quot;; towerID=2; break;</span>
+<span class="fc" id="L319">           default:  url= &quot;file:src/main/resources/laserTower.png&quot;; towerID=3;</span>
+        }
+<span class="fc" id="L321">        Image towerImage = new Image(url, 40, 40, true, true);</span>
+<span class="fc" id="L322">        return new ImageView(towerImage);</span>
+    }
+
+    @Override
+    public void handle(DragEvent event) {
+        //System.out.println(&quot;xx&quot;);
+<span class="fc" id="L328">        Dragboard db = event.getDragboard();</span>
+<span class="fc" id="L329">        boolean success = false;</span>
+<span class="fc" id="L330">        Node towerIcon = getTowerIcon(db);</span>
+
+<span class="pc bpc" id="L332" title="1 of 2 branches missed.">        if (target.getGraphic() == null) {  //if it already have tower,cannot build tower</span>
+<span class="fc bfc" id="L333" title="All 2 branches covered.">            if(arena.addTower(towerID, x, y)){</span>
+<span class="fc" id="L334">                success = true;</span>
+<span class="fc" id="L335">                target.setGraphic(towerIcon);</span>
+<span class="fc" id="L336">                target.setAlignment(Pos.CENTER);</span>
+                //update resources
+<span class="fc" id="L338">                labelMoneyLeft.setText(String.valueOf(arena.money));</span>
+<span class="fc" id="L339">                tower = arena.getTowerAt(new Coordinate(x,y));</span>
+<span class="fc" id="L340">                Circle shadedArea = generateShadedRegion();</span>
+<span class="fc" id="L341">                MouseExitedTowerEventHandler exitEvent = new MouseExitedTowerEventHandler(target, paneArena, shadedArea);</span>
+<span class="fc" id="L342">                target.setOnMouseExited(exitEvent);</span>
+<span class="fc" id="L343">                MouseEnterTowerEventHandler mouseEnter = new MouseEnterTowerEventHandler(target, paneArena, shadedArea, tower, exitEvent);</span>
+<span class="fc" id="L344">                target.setOnMouseEntered(mouseEnter);</span>
+<span class="fc" id="L345">                target.setOnMouseClicked(new MouseClickedEventHandler(target, paneArena, tower, arena, labelMoneyLeft));</span>
+            }
+        }
+<span class="fc" id="L348">        event.setDropCompleted(success);</span>
+<span class="fc" id="L349">        event.consume();</span>
+<span class="fc" id="L350">    }</span>
+}
+
+class MouseEnterTowerEventHandler implements EventHandler&lt;MouseEvent&gt;{
+    //show tower info and shaded fire area
+    private Label target;
+    private AnchorPane paneArena;
+    private Circle shadedArea;
+    private Tower tower;
+    private MouseExitedTowerEventHandler exitEvent;
+
+<span class="fc" id="L361">    public MouseEnterTowerEventHandler(Label target, AnchorPane paneArena, Circle shadedArea, Tower tower, MouseExitedTowerEventHandler exitEvent) {</span>
+<span class="fc" id="L362">        this.target = target;</span>
+<span class="fc" id="L363">        this.paneArena = paneArena;</span>
+<span class="fc" id="L364">        this.shadedArea = shadedArea;</span>
+<span class="fc" id="L365">        this.tower = tower;</span>
+<span class="fc" id="L366">        this.exitEvent = exitEvent;</span>
+<span class="fc" id="L367">    }</span>
+    private Label getInfoPane(){
+<span class="fc" id="L369">        double x = tower.coord.x;</span>
+<span class="fc" id="L370">        double y = tower.coord.y;</span>
+<span class="fc" id="L371">        Label infoPane = new Label();</span>
+<span class="pc bpc" id="L372" title="1 of 2 branches missed.">        if(x&lt;6){        //x = 1,2,3</span>
+<span class="fc" id="L373">            infoPane.setLayoutX((3+x) * 40);</span>
+<span class="fc bfc" id="L374" title="All 2 branches covered.">            if(y&lt;6) infoPane.setLayoutY((3+y) * 40);</span>
+
+<span class="fc" id="L376">            else infoPane.setLayoutY((y-3) * 40);</span>
+        }
+        else{           //x = 4, 5, 6
+<span class="nc" id="L379">            infoPane.setLayoutX((x-3) * 40);</span>
+<span class="nc bnc" id="L380" title="All 2 branches missed.">            if(y&lt;6) infoPane.setLayoutY((3+y) * 40);</span>
+<span class="nc" id="L381">            else infoPane.setLayoutY((y-3) * 40);</span>
+
+        }
+<span class="fc" id="L384">        infoPane.setPadding(new Insets(5));</span>
+<span class="fc" id="L385">        infoPane.setBackground(new Background(new BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY)));</span>
+<span class="fc" id="L386">        infoPane.setStyle(&quot;-fx-border-color: black;&quot;);</span>
+<span class="fc" id="L387">        infoPane.setText(&quot;Type: &quot; + tower.type + &quot;\nPower: &quot; + tower.power +</span>
+                &quot;\nUpgrade Cost: &quot; + tower.cost+ &quot;\nRange: &quot; + tower.range);
+        //Todo improve here
+        //freeze power of ice tower, cool down time of catapult not handel yet
+<span class="fc" id="L391">        infoPane.getText();</span>
+<span class="fc bfc" id="L392" title="All 4 branches covered.">        switch(tower.getTowerType()){</span>
+<span class="fc" id="L393">            case Catapult: infoPane.setText(infoPane.getText()+ &quot;\nFreeze Time: &quot; + ((Catapult)tower).coolingTime + &quot;\nRemain Cooldown Period: &quot; + ((Catapult)tower).remainCoolingPeriod); break;</span>
+<span class="fc" id="L394">            case IceTower: infoPane.setText(infoPane.getText()+ &quot;\nCool Down Time: &quot; + ((IceTower)tower).freezeTime); break;</span>
+<span class="fc" id="L395">            case BasicTower: break;</span>
+<span class="fc" id="L396">            default: infoPane.setText(infoPane.getText()+ &quot;\nMoney Consume: &quot; + ((LaserTower)tower).attackCost);</span>
+        }
+<span class="fc" id="L398">        return infoPane;</span>
+    }
+    @Override
+    public void handle (MouseEvent event) {
+        //System.out.println(&quot;mouse over&quot;);
+<span class="fc" id="L403">        paneArena.getChildren().add(shadedArea);</span>
+<span class="fc" id="L404">        Node infoPane = getInfoPane();</span>
+<span class="fc" id="L405">        paneArena.getChildren().add(infoPane);</span>
+<span class="fc" id="L406">        exitEvent.setInfoPane(infoPane);</span>
+<span class="fc" id="L407">        target.toFront();</span>
+<span class="fc" id="L408">        event.consume();</span>
+<span class="fc" id="L409">    }</span>
+}
+
+class MouseExitedTowerEventHandler implements EventHandler&lt;MouseEvent&gt;{
+    //remove tower info and shaded fire area
+    private Label target;
+    private AnchorPane paneArena;
+    private Circle shadedArea;
+    private Node infoPane;
+<span class="fc" id="L418">    public MouseExitedTowerEventHandler(Label target, AnchorPane paneArena, Circle shadedArea) {</span>
+<span class="fc" id="L419">        this.target = target;</span>
+<span class="fc" id="L420">        this.paneArena = paneArena;</span>
+<span class="fc" id="L421">        this.shadedArea = shadedArea;</span>
+<span class="fc" id="L422">        infoPane = null;</span>
+<span class="fc" id="L423">    }</span>
+
+    public void setInfoPane(Node infoPane) {
+<span class="fc" id="L426">        this.infoPane = infoPane;</span>
+<span class="fc" id="L427">    }</span>
+
+    @Override
+    public void handle (MouseEvent event) {
+        //System.out.println(&quot;mouse exit&quot;);
+<span class="fc" id="L432">        paneArena.getChildren().remove(shadedArea);</span>
+<span class="fc" id="L433">        paneArena.getChildren().remove(infoPane);</span>
+<span class="fc" id="L434">        event.consume();</span>
+<span class="fc" id="L435">    }</span>
+}
+
+class MouseClickedEventHandler implements EventHandler&lt;MouseEvent&gt;{
+    //remove tower info and shaded fire area
+    private Label target;
+    private AnchorPane paneArena;
+    private Tower tower;
+    private Arena arena;
+    Label labelMoneyLeft;
+<span class="fc" id="L445">    public MouseClickedEventHandler(Label target, AnchorPane paneArena, Tower tower, Arena arena, Label labelMoneyLeft) {</span>
+<span class="fc" id="L446">        this.target = target;</span>
+<span class="fc" id="L447">        this.paneArena = paneArena;</span>
+<span class="fc" id="L448">        this.tower = tower;</span>
+<span class="fc" id="L449">        this.arena = arena;</span>
+<span class="fc" id="L450">        this.labelMoneyLeft = labelMoneyLeft;</span>
+<span class="fc" id="L451">    }</span>
+    @Override
+    public void handle (MouseEvent event) {
+        //System.out.println(&quot;mouse clicked&quot;);
+<span class="nc" id="L455">        Stage stage = new Stage();</span>
+<span class="nc" id="L456">        HBox btnPlatform = new HBox();</span>
+<span class="nc" id="L457">        btnPlatform.setAlignment(Pos.CENTER);</span>
+<span class="nc" id="L458">        Button destroy = new Button(&quot;Destroy Tower&quot;);</span>
+<span class="nc" id="L459">        destroy.setOnAction(new DestroyActionHandler(stage, tower, arena, target));</span>
+<span class="nc" id="L460">        Button upgrade = new Button(&quot;Upgrade Tower&quot;);</span>
+<span class="nc" id="L461">        upgrade.setOnAction(new UpgradeActionHandler(stage, tower, arena, labelMoneyLeft));</span>
+<span class="nc" id="L462">        btnPlatform.getChildren().add(destroy);</span>
+<span class="nc" id="L463">        btnPlatform.getChildren().add(upgrade);</span>
+
+<span class="nc" id="L465">        Scene scene = new Scene(btnPlatform, 220, 40);</span>
+<span class="nc" id="L466">        stage.setResizable(false);</span>
+<span class="nc" id="L467">        stage.initStyle(StageStyle.UTILITY);</span>
+<span class="nc" id="L468">        stage.setScene(scene);</span>
+<span class="nc" id="L469">        stage.setTitle(&quot;Tower Operation&quot;);</span>
+<span class="nc" id="L470">        stage.show();</span>
+<span class="nc" id="L471">        event.consume();</span>
+<span class="nc" id="L472">    }</span>
+}
+
+class UpgradeActionHandler implements EventHandler&lt;ActionEvent&gt; {
+    Stage stage;
+    Tower tower;
+    Arena arena;
+    Label labelMoneyLeft;
+
+<span class="nc" id="L481">    UpgradeActionHandler(Stage stage, Tower tower, Arena arena, Label labelMoneyLeft){</span>
+<span class="nc" id="L482">        this.stage = stage;</span>
+<span class="nc" id="L483">        this.tower = tower;</span>
+<span class="nc" id="L484">        this.arena = arena;</span>
+<span class="nc" id="L485">        this.labelMoneyLeft = labelMoneyLeft;</span>
+<span class="nc" id="L486">    }</span>
+    @Override
+    public void handle(ActionEvent event) {
+        //System.out.println(&quot;Upgrade button clicked&quot;);
+<span class="nc" id="L490">        arena.upgradeTower(tower);</span>
+        //update resources
+<span class="nc" id="L492">        labelMoneyLeft.setText(String.valueOf(arena.money));</span>
+        //stage.close();    //todo should uncomment this line afterward
+<span class="nc" id="L494">    }</span>
+}
+
+class DestroyActionHandler implements EventHandler&lt;ActionEvent&gt; {
+    Stage stage;
+    Tower tower;
+    Arena arena;
+    Label target;
+<span class="nc" id="L502">    public DestroyActionHandler(Stage stage, Tower tower, Arena arena, Label target){</span>
+<span class="nc" id="L503">        this.stage = stage;</span>
+<span class="nc" id="L504">        this.tower = tower;</span>
+<span class="nc" id="L505">        this.arena = arena;</span>
+<span class="nc" id="L506">        this.target = target;</span>
+<span class="nc" id="L507">    }</span>
+    @Override
+    public void handle(ActionEvent event) {
+        //Todo implement the remove operation// not quit sure correct or not
+        //System.out.println(&quot;Destroy button clicked&quot;);
+<span class="nc" id="L512">        target.setOnMouseEntered(null);</span>
+<span class="nc" id="L513">        target.setOnMouseExited(null);</span>
+<span class="nc" id="L514">        target.setOnMouseClicked(null);</span>
+<span class="nc" id="L515">        target.setGraphic(null);</span>
+        //System.out.println(&quot;remove mouse event&quot;);
+<span class="nc" id="L517">        arena.removeItem(tower);</span>
+<span class="nc" id="L518">        stage.close();</span>
+<span class="nc" id="L519">    }</span>
+}
+
+class MouseEnterMonsterEventHandler implements EventHandler&lt;MouseEvent&gt;{
+    //show tower info and shaded fire area
+    private AnchorPane paneArena;
+    private Monster monster;
+    private MouseExitedMonsterEventHandler exitEvent;
+
+<span class="fc" id="L528">    public MouseEnterMonsterEventHandler(AnchorPane paneArena, Monster monster, MouseExitedMonsterEventHandler exitEvent) {</span>
+<span class="fc" id="L529">        this.paneArena = paneArena;</span>
+<span class="fc" id="L530">        this.monster = monster;</span>
+<span class="fc" id="L531">        this.exitEvent = exitEvent;</span>
+<span class="fc" id="L532">    }</span>
+    private Label getInfoPane(){
+<span class="nc" id="L534">        double x = monster.coord.x;</span>
+<span class="nc" id="L535">        double y = monster.coord.y;</span>
+<span class="nc" id="L536">        Label infoPane = new Label();</span>
+<span class="nc" id="L537">        infoPane.setPadding(new Insets(5));</span>
+        //todo place the infoPane in a better way
+<span class="nc" id="L539">        infoPane.setLayoutY((y+0.3) * 40);</span>
+<span class="nc bnc" id="L540" title="All 2 branches missed.">        if(x&lt;6){        //x = 1,2,3</span>
+<span class="nc" id="L541">            infoPane.setLayoutX((1+x) * 40);</span>
+        }
+        else{           //x = 4, 5, 6
+<span class="nc" id="L544">            infoPane.setLayoutX((x-3) * 40);</span>
+        }
+<span class="nc" id="L546">        infoPane.setBackground(new Background(new BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY)));</span>
+<span class="nc" id="L547">        infoPane.setStyle(&quot;-fx-border-color: black;&quot;);</span>
+<span class="nc" id="L548">        infoPane.setText(&quot;Hp remaining: &quot; + monster.health);</span>
+<span class="nc" id="L549">        return infoPane;</span>
+    }
+    @Override
+    public void handle (MouseEvent event) {
+        //System.out.println(&quot;mouse over a monster&quot;);
+<span class="nc" id="L554">        Node infoPane = getInfoPane();</span>
+<span class="nc" id="L555">        exitEvent.setInfoPane(infoPane);</span>
+<span class="nc" id="L556">        paneArena.getChildren().add(infoPane);</span>
+<span class="nc" id="L557">        event.consume();</span>
+<span class="nc" id="L558">    }</span>
+<span class="nc" id="L559">}</span>
+
+class MouseExitedMonsterEventHandler implements EventHandler&lt;MouseEvent&gt;{
+<span class="nc bnc" id="L562" title="All 2 branches missed.">    //show tower info and shaded fire area</span>
+    private AnchorPane paneArena;
+<span class="pc" id="L564">    private Node infoPane = null;</span>
+
+<span class="pc" id="L566">    public MouseExitedMonsterEventHandler(AnchorPane paneArena) {</span>
+<span class="pc" id="L567">        this.paneArena = paneArena;</span>
+<span class="fc" id="L568">    }</span>
+    public void setInfoPane(Node infoPane) {
+<span class="nc" id="L570">        this.infoPane = infoPane;</span>
+<span class="nc" id="L571">    }</span>
+    @Override
+    public void handle (MouseEvent event) {
+        //System.out.println(&quot;mouse exited a monster&quot;);
+<span class="nc" id="L575">        paneArena.getChildren().remove(infoPane);</span>
+<span class="nc" id="L576">        event.consume();</span>
+<span class="nc" id="L577">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

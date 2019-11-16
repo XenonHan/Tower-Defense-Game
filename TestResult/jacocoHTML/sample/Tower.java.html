@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tower.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">comp3111Project</a> &gt; <a href="index.source.html" class="el_package">sample</a> &gt; <span class="el_source">Tower.java</span></div><h1>Tower.java</h1><pre class="source lang-java linenums">package sample;
+
+
+
+<span class="fc" id="L5">enum TowerType{BasicTower, IceTower, Catapult, LaserTower}</span>
+
+
+<span class="fc" id="L8">enum TowerStatus{Active, Passive}</span>
+
+/**
+ * 
+ * Tower class is used to generated tower in the game
+ * This class is the base class of the Basic, Ice, Catapult and laser Tower.
+ *
+ */
+public abstract class Tower extends Item{
+	/**
+	 * max monster in a range
+	 */
+<span class="fc" id="L20">    protected int MAX_MONSTER=300;//you may change latter</span>
+    /**
+     * attack range of tower
+     */
+    protected double range;
+    /**
+     * power of tower
+     */
+    protected int power;
+    /**
+     * type of tower
+     */
+    protected TowerType type;
+    /**
+     * status of tower
+     */
+    protected TowerStatus status;
+    /**
+     * cost to build tower
+     */
+    protected int cost;
+
+
+    //monster data, the closest one
+    /**
+     * closest monster
+     */
+<span class="fc" id="L47">    protected Monster closestMon=null;</span>
+    
+    /**
+     * the distance from the closest monster to end zone
+     */
+<span class="fc" id="L52">    protected double closestMonDistance=0;</span>
+
+
+/**
+ * A constructor
+ * @param x an x coordinate of the tower in pixel
+ * @param y an y coordinate of the tower in pixel
+ * @param range the attack range of the tower
+ * @param type the type of the tower
+ * @param cost the cost for building this type of tower
+ */
+    public Tower(int x, int y, double range, TowerType type,int cost)
+    {
+<span class="fc" id="L65">        super(x,y);</span>
+<span class="fc" id="L66">        this.range=range;</span>
+<span class="fc" id="L67">        this.type=type;</span>
+<span class="fc" id="L68">        status=TowerStatus.Active;</span>
+<span class="fc" id="L69">        this.cost=cost;</span>
+
+<span class="fc" id="L71">    }</span>
+    /**
+     * get cost needed to build the tower
+     * 
+     * @return the cost need for building the tower
+     */
+<span class="fc" id="L77">    public int getCost() {return cost;}</span>
+    
+    /**
+     * get the type of the tower
+     * @return the type of the tower
+     */
+<span class="fc" id="L83">    public TowerType getTowerType() {return type;}</span>
+    
+    /**
+     * get the upgrade cost 
+     * 
+     * @return the cost for the tower upgrade
+     */
+<span class="fc" id="L90">    public int getUpgradeCost() {return cost/3;}//it is the cost for upgrade the tower</span>
+    
+    /**
+     * get cost need for attack
+     * @return the cost for each attack (if any)
+     */
+<span class="fc" id="L96">    public int getAttackCost() {return 0;}</span>
+
+    //This function check whether the monster is in the attack range of tower
+    /**
+     * Check whether the monster is in the attack range
+     * @param monster the array store all live monsters
+     * @param size the size of the array
+     */
+    public void inAttackRange(Monster monster[],int size)
+    {
+    	/**
+    	 * x coordinate
+    	 */
+        double tempX;
+        
+        /**
+         * y coordinate
+         */
+        double tempY;
+        
+        /**
+         * distance btw monster and tower
+         */
+        double tempRange;
+        
+        /**
+         * distance btw monster to end zone
+         */
+        double tempClosest;
+        
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        if(monster==null)</span>
+<span class="fc" id="L127">        	return;</span>
+        
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        for(int i=0;i&lt;size;i++)</span>
+        {
+<span class="fc" id="L131">            tempX=monster[i].coord.pixel_X;</span>
+<span class="fc" id="L132">            tempY=monster[i].coord.pixel_Y;</span>
+<span class="fc" id="L133">            tempRange=Math.sqrt(Math.pow((coord.pixel_X-tempX),2)+Math.pow((coord.pixel_Y-tempY),2));</span>
+            //System.out.println(&quot;temp range = &quot; + tempRange);
+<span class="fc" id="L135">            tempClosest=Math.sqrt(Math.pow((tempX-440),2)+Math.pow((tempY-0),2));</span>
+
+<span class="fc bfc" id="L137" title="All 2 branches covered.">            if(tempRange&lt;=range)</span>
+            {
+<span class="fc" id="L139">                storeclosestMonster(monster[i],tempClosest);</span>
+            }
+        }
+
+<span class="fc" id="L143">    }</span>
+
+
+  
+    /**
+     * store the closest monster to the tower.
+     * This function designed to fulfill the requirement that &quot;a tower always pick the monster closest to the upper-left of end zone&quot;
+     * What here done to use the formula to find the monster which is closest to the end zone by coordinate, not by path
+     * Because to fulfill the game physics, closest monster to end zone, so straight line from start to end zone always closest
+     * @param monster a specific monster
+     * @param tempClosest the distance between the monster and the tower
+     * @return successful store or not
+     */
+    public boolean storeclosestMonster(Monster monster,double tempClosest)
+    {
+
+<span class="fc bfc" id="L159" title="All 4 branches covered.">        if(closestMon==null ||tempClosest&lt;closestMonDistance)</span>
+        {
+<span class="fc" id="L161">            closestMon=monster;</span>
+<span class="fc" id="L162">            closestMonDistance=tempClosest;</span>
+<span class="fc" id="L163">            return true;</span>
+        }
+
+<span class="fc" id="L166">        return false;</span>
+
+    }
+    /**
+     * clean the temp data before enter next frame
+     */
+    public void newFrame() //Each tower should  this to update the locate storage before start next frame
+    {
+<span class="fc" id="L174">        closestMon=null;</span>
+<span class="fc" id="L175">        closestMonDistance=0;</span>
+<span class="fc" id="L176">    }</span>
+
+
+    //for arena to plot the graph
+    //Or to get the closest monster been attacked
+    /**
+     * This is a helper function help arena to plot graph
+     * @return a monster +  slope of the line from laser tower (if need)
+     */
+    public Monster getGraph()
+    {
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        if(closestMon == null) {</span>
+<span class="fc" id="L188">            return null;</span>
+        }
+<span class="fc" id="L190">        Monster temp=closestMon;</span>
+
+<span class="fc" id="L192">        temp.coord.slope = coord.slope;//store the slope btw tower and monster for laser tower;</span>
+<span class="fc" id="L193">        return temp;</span>
+    }
+    /**
+     * this is the update tower function
+     */
+    public abstract void upgrade(); // you should handle player's recourse in arena
+    
+    /**
+     * This function used to attack the closest monster
+     * 
+     * @param monster a monster array
+     * @param size size of the array
+     * @return attack is successful or not
+     */
+    public abstract boolean attackMonster(Monster monster[], int size);
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>
