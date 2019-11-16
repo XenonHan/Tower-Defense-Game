@@ -1,0 +1,118 @@
+*   fe1cc27 : Merge pull request #31 from XenonHan/Tower_version_3.0
+|\  
+| * eaa6379 : change the freezeTime from 1 to 3, make a human readable period
+* |   a60875d : Merge pull request #30 from XenonHan/Tower_version_3.0
+|\ \  
+| |/  
+| * a841b96 : make the game more fun (?)
+* |   ccba0f8 : Merge pull request #29 from XenonHan/Tower_version_3.0
+|\ \  
+| |/  
+| * 1c761d2 : tiny update
+|/  
+*   ff81a66 : Merge pull request #28 from XenonHan/controler4.0
+|\  
+| * 70cfe46 : fix bug and modify tower data
+* |   5cc01bd : Merge pull request #27 from XenonHan/Version5.0
+|\ \  
+| * | 7daec97 : tiny update
+|/ /  
+* |   facd153 : Merge pull request #26 from XenonHan/controler4.0
+|\ \  
+| |/  
+| * 2d90c55 : add test and upgrade controler, arena
+|/  
+*   be65807 : Merge pull request #25 from XenonHan/Tower_version_3.0
+|\  
+| * 68f3a76 : YOU MUST　PULL THIS VERSION!!! Many change, I even do not remember all
+* |   de8ca9e : Merge pull request #24 from XenonHan/Tower_version_3.0
+|\ \  
+| |/  
+| * 8e57c95 : new version
+* | 0b2977b : Update readme.md
+* | 02fce34 : Update readme.md
+* | e2f3ad2 : Update readme.md
+* | 76fbef5 : Update readme.md
+* |   02729f4 : Merge pull request #22 from XenonHan/Tower_version_3.0
+|\ \  
+| |/  
+| * 8f61680 : new version 3.0
+|/  
+*   4ec8415 : Merge pull request #21 from XenonHan/controler
+|\  
+| * fe69bd7 : modify
+* |   a9a914d : Merge pull request #20 from XenonHan/morning
+|\ \  
+| |/  
+| * 0fe226b : morning update
+|/  
+*   d8d2636 : Merge pull request #19 from XenonHan/Tower_version2.0
+|\  
+| * 3881b6d : modify the Catapult, Laser range. Delete the destory() function
+|/  
+*   86f00c5 : Merge pull request #18 from XenonHan/CorrectUpdate
+|\  
+| * c5ba848 : correct update
+|/  
+*   44c3e00 : Merge pull request #17 from XenonHan/newVersion
+|\  
+| * 66aa029 : new version
+|/  
+*   72451a3 : Merge pull request #15 from XenonHan/Tower3
+|\  
+| * daeb395 : New version:follow the Game Physis, match arena operation, more efficiency
+|/  
+*   fc19bb3 : Merge pull request #13 from XenonHan/Lab7test
+|\  
+| *   afafd58 : Merge branch 'master' into Lab7test
+| |\  
+| |/  
+|/|   
+* |   274aa6c : Merge pull request #12 from XenonHan/Tower2
+|\ \  
+| * | 95c3e50 : typoo fixed
+* | |   8e6d52d : Merge pull request #11 from XenonHan/Tower2
+|\ \ \  
+| |/ /  
+| * | 5405a87 : update readme
+* | |   85d850d : Merge pull request #10 from XenonHan/Tower2
+|\ \ \  
+| |/ /  
+| * | c2934c6 : tiny update for the enum and getGraph()
+* | |   e7e7cd8 : Merge pull request #9 from XenonHan/Tower2
+|\ \ \  
+| |/ /  
+| * | ae18ce0 : logical changes to simply operation in arena - new version
+|/ /  
+* |   79b34ac : Merge pull request #7 from XenonHan/Lab7test
+|\ \  
+* \ \   e0e8fce : Merge pull request #6 from XenonHan/Lab7test
+|\ \ \  
+* \ \ \   08173e7 : Merge pull request #5 from XenonHan/Tower1
+|\ \ \ \  
+| * | | | 0916e49 : add upgrade cost(optional)
+* | | | |   eac704e : Merge pull request #4 from XenonHan/Tower1
+|\ \ \ \ \  
+| |/ / / /  
+| * | | | 7661076 : change to match controller
+|/ / / /  
+* | | |   bb89d72 : Merge pull request #3 from XenonHan/Lab7test
+|\ \ \ \  
+* \ \ \ \   2f469d1 : Merge pull request #2 from XenonHan/Tower
+|\ \ \ \ \  
+| * | | | | 1efa1e6 : I build the basic functions for the towers, not debug yet
+|/ / / / /  
+* | | | |   fced8dc : Merge pull request #1 from XenonHan/Lab7test
+|\ \ \ \ \  
+| | | | | * 095422e : update
+| | | | |/  
+| | | | * d420b5e : control arena update
+| | | |/  
+| | | * ac5a45b : add arena class and adjust item and controler
+| | | * 5a21ad8 : adjust controler and Item
+| | |/  
+| | * 78d69f6 : I add a item class
+| |/  
+| * 8b49b1d : try
+|/  
+* 6395026 : init

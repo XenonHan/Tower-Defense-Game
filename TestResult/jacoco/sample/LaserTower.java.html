@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LaserTower.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">comp3111Project</a> &gt; <a href="index.source.html" class="el_package">sample</a> &gt; <span class="el_source">LaserTower.java</span></div><h1>LaserTower.java</h1><pre class="source lang-java linenums">package sample;
+
+/**
+ * Laser tower class expend from Tower
+ */
+public class LaserTower extends Tower {
+
+    /**
+     * monsters in the laser line
+     */
+<span class="fc" id="L11">    Monster[] SetOfMonster=new Monster[MAX_MONSTER];</span>
+    /**
+     * monster within 3px of laser line
+     */
+<span class="fc" id="L15">    Monster[] subMons=new Monster[MAX_MONSTER]; //other monster near the laser also attacked</span>
+    /**
+     * power for not hit directly
+     */
+<span class="fc" id="L19">    int subPower=0;//no on the line receive less damage</span>
+    /**
+     * array counter
+     */
+<span class="fc" id="L23">    int counter=0;</span>
+    /**
+     * another array counter
+     */
+<span class="fc" id="L27">    int subCounter=0;</span>
+    /**
+     * cost for attack
+     */
+<span class="fc" id="L31">    int attackCost=3;</span>
+
+    /**
+     * A constructor
+     * @param coodinateX x coordinate
+     * @param coordinateY y coordinate
+     * @param power power of the tower
+     */
+    public LaserTower(int coodinateX, int coordinateY,int power)
+    {
+<span class="fc" id="L41">        super(coodinateX, coordinateY, 160 , TowerType.LaserTower,20);</span>
+<span class="fc" id="L42">        this.power=power;</span>
+<span class="fc" id="L43">        subPower=power-2;</span>
+<span class="fc" id="L44">    }</span>
+
+
+
+    //You should first call the above function to produce a line equation (shortest monster to tower)
+    //Then you can input all the monster to this function to check whether they are in that line
+    /**
+     * plot the laser line and use this to check whether there is any monster in the line or 3px within the line
+     */
+    private void PlotLaserRoute(Monster monster[],int size)
+    {
+    	/**
+    	 * A attribute to find the distance btw line and point
+    	 */
+<span class="fc" id="L58">    	double A=0;</span>
+    	
+    	/**
+    	 * B attribute to find the distance btw line and point
+    	 */
+<span class="fc" id="L63">    	double B=0;</span>
+    	
+    	/**
+    	 * C attribute to find the distance btw line and point
+    	 */
+<span class="fc" id="L68">    	double C=0;</span>
+    	/**
+    	 * distance btw a point and line
+    	 */
+<span class="fc" id="L72">    	double distance=0;</span>
+ 
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        for(int i=0;i&lt;size;i++)</span>
+        {
+<span class="fc bfc" id="L76" title="All 4 branches covered.">        	if(closestMon.coord.pixel_X-coord.pixel_X&gt;0&amp;&amp;monster[i].coord.pixel_X-coord.pixel_X&lt;=0)</span>
+<span class="fc" id="L77">				continue;</span>
+
+<span class="fc bfc" id="L79" title="All 4 branches covered.">			else if (closestMon.coord.pixel_X-coord.pixel_X&lt;0&amp;&amp;monster[i].coord.pixel_X-coord.pixel_X&gt;=0)</span>
+<span class="fc" id="L80">				continue;</span>
+
+
+            //y-y1=m(x-x1) -&gt; check the monster is on the line or not
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            if(Math.abs(coord.pixel_Y-monster[i].coord.pixel_Y-coord.slope*(coord.pixel_X-monster[i].coord.pixel_X))&lt;0.01)//double compare</span>
+            {
+<span class="fc" id="L86">                SetOfMonster[counter]=monster[i];</span>
+<span class="fc" id="L87">                counter++;</span>
+<span class="fc" id="L88">                continue;</span>
+            }
+            
+            //find whether a point with 3px
+<span class="fc" id="L92">           B=1;</span>
+<span class="fc" id="L93">           A=-coord.slope;</span>
+<span class="fc" id="L94">           C=coord.pixel_X*coord.slope-coord.pixel_Y;</span>
+<span class="fc" id="L95">           distance = Math.abs((A*monster[i].coord.pixel_X)+(B*monster[i].coord.pixel_Y)+C) / (A*A+B*B); //Don't ask me to prove this </span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">           if(distance&lt;=3)</span>
+<span class="fc" id="L97">        	   subMons[subCounter++]=monster[i];</span>
+
+        }
+<span class="fc" id="L100">    }</span>
+    /**
+     * attack monster
+     */
+    public boolean attackMonster(Monster monster[],int size)
+    {
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        if(status==TowerStatus.Passive)</span>
+<span class="fc" id="L107">            return false;</span>
+
+
+<span class="fc" id="L110">        inAttackRange(monster,size);</span>
+
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        if(closestMon == null) {</span>
+<span class="fc" id="L113">            return false;</span>
+        }
+
+<span class="fc" id="L116">        coord.slope=(coord.pixel_Y-closestMon.coord.pixel_Y)/(coord.pixel_X-closestMon.coord.pixel_X);</span>
+
+<span class="fc" id="L118">        PlotLaserRoute(monster,size);</span>
+
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        for(int i=0;i&lt;counter;i++)</span>
+        {
+<span class="fc" id="L122">            SetOfMonster[i].damage(power);</span>
+        }
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        for(int i=0;i&lt;subCounter;i++)</span>
+        {
+<span class="fc" id="L126">            subMons[i].damage(subPower);</span>
+        }
+<span class="fc" id="L128">        return true;</span>
+    }
+
+    /**
+     * upgrade
+     */
+    public void upgrade()
+    {
+<span class="fc" id="L136">        power+=2; //I don't know, you may change</span>
+<span class="fc" id="L137">        attackCost++;//You need to reduce recourse in arena</span>
+        
+<span class="fc" id="L139">    }</span>
+    public void newFrame()
+    {
+<span class="fc" id="L142">        counter=subCounter=0; //lazy update the two arrays</span>
+<span class="fc" id="L143">        coord.slope=0;</span>
+<span class="fc" id="L144">        closestMon=null;</span>
+<span class="fc" id="L145">        closestMonDistance=0;</span>
+
+<span class="fc" id="L147">    }</span>
+
+    //laser cost some recourse before attack, handle by arena
+    /**
+     * return attack cost
+     * @return attack cost
+     */
+<span class="fc" id="L154">    public int getAttackCost() {return attackCost;}</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>
