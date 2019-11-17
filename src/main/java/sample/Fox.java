@@ -13,7 +13,7 @@ public class Fox extends Monster{
 	 */
 	public Fox(int health, int earning,int speed)
 	{
-		super(health,earning,MonsterType.Fox,20);
+		super(health,earning,MonsterType.Fox,speed);
 		
 	}
 	

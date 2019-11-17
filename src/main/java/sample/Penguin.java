@@ -18,7 +18,7 @@ public class Penguin extends Monster{
 	 */
 	public Penguin(int health, int earning,int speed)
 	{
-		super(health,earning,MonsterType.Penguin,20);
+		super(health,earning,MonsterType.Penguin,speed);
 		HP=health;
 
 	}
