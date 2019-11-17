@@ -38,6 +38,10 @@ public abstract class Tower extends Item{
      * cost to build tower
      */
     protected int cost;
+    /**
+     * current level of tower
+     */
+    protected int level;
 
 
     //monster data, the closest one
@@ -67,7 +71,7 @@ public abstract class Tower extends Item{
         this.type=type;
         status=TowerStatus.Active;
         this.cost=cost;
-
+        level=1;
     }
     /**
      * get cost needed to build the tower
@@ -87,7 +91,7 @@ public abstract class Tower extends Item{
      * 
      * @return the cost for the tower upgrade
      */
-    public int getUpgradeCost() {return cost/3;}//it is the cost for upgrade the tower
+    public int getUpgradeCost() {return (int)(cost*1.2);}//it is the cost for upgrade the tower
     
     /**
      * get cost need for attack

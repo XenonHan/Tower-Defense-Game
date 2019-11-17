@@ -42,7 +42,7 @@ public class ArenaTest {
         Tower Itower = (Tower)a.items[1];
         Tower Ctower = (Tower)a.items[2];
         Tower Ltower = (Tower)a.items[3];
-        a.setMoney(18);
+        a.setMoney(69);
         Assert.assertFalse(a.upgradeTower(null));
         Assert.assertTrue(a.upgradeTower(Btower));
         Assert.assertTrue(a.upgradeTower(Itower));
@@ -61,12 +61,10 @@ public class ArenaTest {
     public void insertMoreTower() {
         Arena a = new Arena(null);
         a.setMoney(1000);
-        a.addTower(0, 2, 3);
-        a.addTower(1, 2, 3);
-        a.addTower(2, 2, 3);
-        Assert.assertTrue(a.addTower(3, 2, 3));
-        //add on white grid
-        Assert.assertFalse(a.addTower(4, 2, 3));
+        a.addTower(0, 1, 3);
+        a.addTower(1, 1, 4);
+        a.addTower(2, 1, 5);
+        Assert.assertTrue(a.addTower(3, 1, 6));
 
         Assert.assertEquals(a.num_items, 4);
         Assert.assertEquals(a.items.length, 4);

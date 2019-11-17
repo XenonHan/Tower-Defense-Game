@@ -70,16 +70,20 @@ public class MyController {
         buttonPlay.setDisable(true);
         setDragAndDrop();
         labelMoneyLeft.setText(String.valueOf(arena.money));
+        //todo remove this line when submit this project
+        buttonNextFrame.setOnMouseDragged(e->nextFrame());
     }
     /**
-     * create the arena which consist of white and green grid
+     * create the arena which consist of white and green grid.
+     * Add symbolic graphic to end zone and monster generate zone
      */
     @FXML
     public void createArena() {
         buttonNextFrame.setDisable(true);
         buttonSimulate.setDisable(true);
-        if (grids[0][0] != null)
+        if (grids[0][0] != null){
             return; //created already
+        }
         for (int i = 0; i < MAX_V_NUM_GRID; i++) {
             for (int j = 0; j < MAX_H_NUM_GRID; j++) {
                 Label newLabel = new Label();
@@ -110,10 +114,12 @@ public class MyController {
     }
 
     /**
-     * process the next frame option
-     * <p>remove all the graphic that show the tower attack, then process next round</p>
-     * <p>then place monster icon in updated location</p>
-     * <p>check if is game over if yes, stop the game, else update resources</p>
+     * player can process to next round by clicking the nextFrame button or
+     * press the nextFrame button and keep dragging the mouse.
+     * <p>this function help process the next frame option</p>
+     * <p>first, remove all the graphic that show the tower attack, then process next round</p>
+     * then place monster icon in updated location<
+     * check if is game over if yes, stop the game, pop up a pane to inform the player, else update resources</p>
      */
     @FXML
     private void nextFrame(){
@@ -344,6 +350,10 @@ class DragDroppedEventHandler implements EventHandler<DragEvent> {
                 target.setOnMouseEntered(mouseEnter);
                 target.setOnMouseClicked(new MouseClickedEventHandler(target, paneArena, tower, arena, labelMoneyLeft));
             }
+            else {
+                Alert info = new Alert(Alert.AlertType.WARNING, "Not enough resources to build the tower");
+                info.show();
+            }
         }
         event.setDropCompleted(success);
         event.consume();
@@ -385,7 +395,7 @@ class MouseEnterTowerEventHandler implements EventHandler<MouseEvent>{
         infoPane.setBackground(new Background(new BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY)));
         infoPane.setStyle("-fx-border-color: black;");
         infoPane.setText("Type: " + tower.type + "\nPower: " + tower.power +
-                "\nUpgrade Cost: " + tower.cost+ "\nRange: " + tower.range);
+                "\nUpgrade Cost: " + tower.cost+ "\nRange: " + tower.range + "\nLevel = "+ tower.level);
         //Todo improve here
         //freeze power of ice tower, cool down time of catapult not handel yet
         infoPane.getText();
@@ -453,16 +463,25 @@ class MouseClickedEventHandler implements EventHandler<MouseEvent>{
     public void handle (MouseEvent event) {
         //System.out.println("mouse clicked");
         Stage stage = new Stage();
+        VBox operationPane = new VBox();
+        Label notes = new Label("Tower max Level Reached");
         HBox btnPlatform = new HBox();
         btnPlatform.setAlignment(Pos.CENTER);
         Button destroy = new Button("Destroy Tower");
         destroy.setOnAction(new DestroyActionHandler(stage, tower, arena, target));
         Button upgrade = new Button("Upgrade Tower");
         upgrade.setOnAction(new UpgradeActionHandler(stage, tower, arena, labelMoneyLeft));
+
         btnPlatform.getChildren().add(destroy);
         btnPlatform.getChildren().add(upgrade);
-
-        Scene scene = new Scene(btnPlatform, 220, 40);
+        operationPane.getChildren().add(btnPlatform);
+        if(tower.level>3){              //a tower can only be upgraded three times
+            upgrade.setDisable(true);
+            operationPane.getChildren().add(notes);
+        }
+        operationPane.setAlignment(Pos.CENTER);
+        //the new scene poped up to let player choose tower operation
+        Scene scene = new Scene(operationPane, 220, 50);
         stage.setResizable(false);
         stage.initStyle(StageStyle.UTILITY);
         stage.setScene(scene);
@@ -490,7 +509,7 @@ class UpgradeActionHandler implements EventHandler<ActionEvent> {
         arena.upgradeTower(tower);
         //update resources
         labelMoneyLeft.setText(String.valueOf(arena.money));
-        //stage.close();    //todo should uncomment this line afterward
+        stage.close();    //todo should uncomment this line afterward
     }
 }
 

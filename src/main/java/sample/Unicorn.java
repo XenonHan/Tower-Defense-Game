@@ -15,6 +15,6 @@ public class Unicorn extends Monster {
 	{
 		super(health,earning,MonsterType.Unicorn,20);
 	}
-		
+
 
 }

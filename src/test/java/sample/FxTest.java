@@ -63,6 +63,7 @@ public class FxTest extends ApplicationTest {
 
 		//fail add
 		drag("#labelLaserTower");
+		moveTo(grid[2][2]);
 		dropTo(grid[2][2]);
 		Assert.assertTrue(grid[2][2].getGraphic() == null);
 		Assert.assertTrue(grid[1][0].getGraphic() == null);
