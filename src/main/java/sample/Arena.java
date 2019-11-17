@@ -44,42 +44,36 @@ public class Arena {
 	/**
 	 * This is the array use to store the monster HP
 	 */
-	int monstorHP[]= {15,30,50};//record the monster HP
+	int monstorHP[]= {15,30,50};//record the monster HP (fox, penguin, unicorn)
 
 	private int generate;
-
-	private int getNumOfMOnsterGenerate(){
-		if(turn%30 == 0){
-			generate++;
-		}
-		if (turn % (generate+1) > 0) {
-			//System.out.println("monster generated");
-			return generate;
-		}
-		return 0;
-        //return 20;
-	}
-	//todo should make back to private afterwards
 
 	/**
 	 * generate 0 or more number of monster in each turn
 	 */
 	protected void generateMonster() {
+
 		Random rand = new Random();
 		int randInt = rand.nextInt(3);
 		Monster e;
-		if(turn !=0 && turn%10==0) {
-			for(int i=0;i<3;i++)
-				monstorHP[i]+=5;
+		if (turn != 0 && turn % 10 == 0) {
+			for (int i = 0; i < 3; i++)
+				monstorHP[i] *= 1.2;		//health growth rate of monster
 		}
-		switch(randInt){
+		switch (randInt) {
 			//todo implements to call correctly after Boby's work
-			case 0: e = new Fox(monstorHP[0], 8,20); break;
-			case 1: e = new Penguin(monstorHP[1],15,10);break;
-			default: e = new Unicorn(monstorHP[2],10,15);
+			case 0:
+				e = new Fox(monstorHP[0], 8, 20);
+				break;
+			case 1:
+				e = new Penguin(monstorHP[1], 15, 10);
+				break;
+			default:
+				e = new Unicorn(monstorHP[2], 10, 15);
 		}
 		addItem(e);
 	}
+
 
 	/**
 	 * Create a Arena with given AnchorPane
@@ -172,7 +166,7 @@ public class Arena {
 			case 2: temp = new Catapult(x , y, 6); break;
 			case 3: temp = new LaserTower(x , y, 8); break;
 			default:
-                System.out.println("invalid tower ID, bug in add Tower"); return false;
+                throw new IllegalStateException();
 		}
 		//money limit
 		if(money-temp.getCost()<0){
@@ -184,7 +178,8 @@ public class Arena {
 		return true;
 	}
 	/**
-	 * Perform upgrade to the tower
+	 * Perform upgrade to the tower. A tower can only being upgraded for three times
+	 * otherwise the game will be too easy.
 	 * @param t	the tower that will receive the upgrade
 	 * @return true if update successful i.e. have enough resources to upgrade, False if otherwise
 	 */
@@ -210,6 +205,7 @@ public class Arena {
 		}
 		money -= t.getUpgradeCost();
 		t.upgrade();
+		t.level++;
 		return true;
 	}
 	/**
@@ -265,7 +261,7 @@ public class Arena {
 							") -> " + attackedM.getType() + " at location (" + attackedM.coord.x + " , " + attackedM.coord.y +")");
 					Line line = new Line(t.coord.pixel_X, t.coord.pixel_Y, attackedM.coord.pixel_X, attackedM.coord.pixel_Y);
 					line.setStyle("-fx-stroke: red;");
-					//draw the laser line untill the edge of the arena
+					//draw the laser line until the edge of the arena
 					if(t instanceof LaserTower){
 						line.setStrokeWidth(6);
 						double x = attackedM.coord.pixel_X;
@@ -327,6 +323,7 @@ public class Arena {
 	}
 	/**
 	 * it set the amount of money. Is for testing only, should not be called in the game
+	 * @param money the amount of money you want to set
 	 */
 	public void setMoney(int money) {
 		this.money = money;

@@ -28,7 +28,7 @@ public class LaserTower extends Tower {
     /**
      * cost for attack
      */
-    int attackCost=3;
+    int attackCost=2;
 
     /**
      * A constructor

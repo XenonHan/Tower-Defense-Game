@@ -23,7 +23,7 @@ public  class Monster extends Item{
 	/**
 	 * reward when the monster were killed
 	 */
-	int earning;		
+	int earning;
 	/**
 	 * monster type
 	 */
@@ -55,20 +55,20 @@ public  class Monster extends Item{
 		this.earning = earning;
 		this.type = type;
 		this.speed =normalSpeed=speed;
-		
+
 		System.out.println(Montype[type.ordinal()] +" "+ health + " hp generated");
 	}
-	
+
 	/**
 	 * reduce the monster  hp
-	 * 
+	 *
 	 * @param health monster hp
 	 */
-	public void damage(int health) 
+	public void damage(int health)
 	{
 		this.health-=health;
 	}
-	
+
 	/**
 	 * update the freeze time by ice tower, the time cannot more then 3, and the monster would been stopped
 	 * @param freezeTime the time freeze by ice tower
@@ -77,8 +77,10 @@ public  class Monster extends Item{
 	{
 		this.freezeTime = freezeTime;
 		speed-=5; //this fix, or your can modify
+		if(speed<0)
+			speed=0;
 	}
-	
+
 	/**
 	 * return speed
 	 * @return speed
@@ -86,7 +88,7 @@ public  class Monster extends Item{
 	public int getSpeed() {
 		return speed;
 	}
-	
+
 	/**
 	 * check whether the monster dead or not
 	 * @return true or false
@@ -107,7 +109,7 @@ public  class Monster extends Item{
 	 * Also update the remaining freeze time, if any
 	 */
 	public void move(){
-		
+
 		/**
 		 * temp variable for monster's x coordinate
 		 */
@@ -120,99 +122,98 @@ public  class Monster extends Item{
 		 * the distance the monster move
 		 */
 		double distance;
-		if(speed<=0)
-			return;
-		
-		if(coord.pixel_X<40||coord.pixel_X>160&&coord.pixel_X<200||coord.pixel_X>320&&coord.pixel_X<360)
+		if(speed>0)
 		{
-			distance=460-coord.pixel_Y-speed; //420 means in the middle of the grid, monster not move to the bottom of the bottom grid
-			if(coord.pixel_Y==20)
+			if(coord.pixel_X<40||coord.pixel_X>160&&coord.pixel_X<200||coord.pixel_X>320&&coord.pixel_X<360)
 			{
-				if(coord.pixel_X-320>0&&coord.pixel_X+speed>=340)
+				distance=460-coord.pixel_Y-speed; //420 means in the middle of the grid, monster not move to the bottom of the bottom grid
+				if(coord.pixel_Y==20)
 				{
-					moveX=340-coord.pixel_X;
-					moveY=speed-moveX;
+					if(coord.pixel_X-320>0&&coord.pixel_X+speed>=340)
+					{
+						moveX=340-coord.pixel_X;
+						moveY=speed-moveX;
+					}
+					else if(coord.pixel_X-160>0&&coord.pixel_X+speed>=180)
+					{
+						moveX=180-coord.pixel_X;
+						moveY=speed-moveX;
+					}
+					else
+					{
+						moveY=speed;
+					}
 				}
-				else if(coord.pixel_X-160>0&&coord.pixel_X+speed>=180)
-				{
-					moveX=180-coord.pixel_X;
-					moveY=speed-moveX;
-				}
-				else
+				else if(distance >=0)
 				{
 					moveY=speed;
 				}
-			}
-			else if(distance >=0)
-			{
-				moveY=speed;
-			}
-			else
-			{
-				moveY=460-coord.pixel_Y;
-				moveX=speed-moveY;
-			}
-			
-			coord.pixel_X+=moveX;
-			coord.pixel_Y+=moveY;
-			this.coord=new Coordinate((coord.pixel_X-20)/40,(coord.pixel_Y-20)/40);
-			
-			
-		}
-		else if(coord.pixel_X>80&&coord.pixel_X<120||coord.pixel_X>240&&coord.pixel_X<280||coord.pixel_X>400&&coord.pixel_X<440)
-		{
-			distance=coord.pixel_Y-speed-20;
-			if(coord.pixel_Y==460)
-			{
-				if(coord.pixel_X-400>0&&coord.pixel_X+speed>=420)
+				else
 				{
-					moveX=420-coord.pixel_X;
-					moveY=speed-moveX;
+					moveY=460-coord.pixel_Y;
+					moveX=speed-moveY;
 				}
-				else if(coord.pixel_X-240>0&&coord.pixel_X+speed>=260)
+
+				coord.pixel_X+=moveX;
+				coord.pixel_Y+=moveY;
+				this.coord=new Coordinate((coord.pixel_X-20)/40,(coord.pixel_Y-20)/40);
+
+
+			}
+			else if(coord.pixel_X>80&&coord.pixel_X<120||coord.pixel_X>240&&coord.pixel_X<280||coord.pixel_X>400&&coord.pixel_X<440)
+			{
+				distance=coord.pixel_Y-speed-20;
+				if(coord.pixel_Y==460)
 				{
-					moveX=260-coord.pixel_X;
-					moveY=speed-moveX;
+					if(coord.pixel_X-400>0&&coord.pixel_X+speed>=420)
+					{
+						moveX=420-coord.pixel_X;
+						moveY=speed-moveX;
+					}
+					else if(coord.pixel_X-240>0&&coord.pixel_X+speed>=260)
+					{
+						moveX=260-coord.pixel_X;
+						moveY=speed-moveX;
+					}
+					else if(coord.pixel_X-80>0&&coord.pixel_X+speed>=100)
+					{
+						moveX=100-coord.pixel_X;
+						moveY=speed-moveX;
+					}
+					else
+					{
+
+						moveX=speed;
+					}
 				}
-				else if(coord.pixel_X-80>0&&coord.pixel_X+speed>=100)
+				else if(distance >=0)
 				{
-					moveX=100-coord.pixel_X;
-					moveY=speed-moveX;
+					moveY=speed;
 				}
 				else
 				{
-					
-					moveX=speed;
+					moveY=coord.pixel_Y-20;
+					moveX=speed-moveY;
+
 				}
-			}
-			else if(distance >=0)
-			{
-				moveY=speed;
+
+				coord.pixel_X+=moveX;
+				coord.pixel_Y-=moveY;
+				this.coord=new Coordinate((coord.pixel_X-20)/40,(coord.pixel_Y-20)/40);
 			}
 			else
 			{
-				moveY=coord.pixel_Y-20;
-				moveX=speed-moveY;
-
+				coord.pixel_X+=speed;
+				this.coord=new Coordinate((coord.pixel_X-20)/40,(coord.pixel_Y-20)/40);
 			}
-			 
-			coord.pixel_X+=moveX;
-			coord.pixel_Y-=moveY;
-			this.coord=new Coordinate((coord.pixel_X-20)/40,(coord.pixel_Y-20)/40);
+
 		}
-		else
-		{
-			coord.pixel_X+=speed;
-			this.coord=new Coordinate((coord.pixel_X-20)/40,(coord.pixel_Y-20)/40);
-		}
-		
-		
 		if(freezeTime>0)
 			freezeTime--;
 		if(freezeTime==0)
 			speed = normalSpeed;
-		
-			
+
+
 	}
 
 

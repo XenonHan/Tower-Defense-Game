@@ -178,7 +178,7 @@ public class TowerTest {
 		
 		a.getGraph();
 		Assert.assertEquals(a.getTowerType(), a.type);
-		Assert.assertEquals(a.getUpgradeCost(), a.cost/3);
+		Assert.assertEquals(a.getUpgradeCost(), (int)(a.cost*1.2));
 		Assert.assertEquals(a.getAttackCost(), 0);
 	}
 
