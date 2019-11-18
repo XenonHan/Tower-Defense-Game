@@ -120,8 +120,10 @@ public class LaserTower extends Tower {
         if(closestMon == null) {
             return false;
         }
-
-        coord.slope=(coord.pixel_Y-closestMon.coord.pixel_Y)/(coord.pixel_X-closestMon.coord.pixel_X);
+        
+        if(coord.pixel_X-closestMon.coord.pixel_X!=0)
+        	coord.slope=(coord.pixel_Y-closestMon.coord.pixel_Y)/(coord.pixel_X-closestMon.coord.pixel_X);
+        
 
         PlotLaserRoute(monster,size);
 
