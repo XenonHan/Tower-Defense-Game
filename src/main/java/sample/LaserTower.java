@@ -79,9 +79,17 @@ public class LaserTower extends Tower {
 			else if (closestMon.coord.pixel_X-coord.pixel_X<0&&monster[i].coord.pixel_X-coord.pixel_X>=0)
 				continue;
 
-
-            //y-y1=m(x-x1) -> check the monster is on the line or not
-            if(Math.abs(coord.pixel_Y-monster[i].coord.pixel_Y-coord.slope*(coord.pixel_X-monster[i].coord.pixel_X))<0.01)//double compare
+        	if(closestMon.coord.pixel_X==coord.pixel_X)
+        	{
+        		if(monster[i].coord.pixel_X==coord.pixel_X)
+        		{
+        			 SetOfMonster[counter++]=monster[i];
+        			 continue;
+        		}
+        		
+        			
+        	}
+        	else if(Math.abs(coord.pixel_Y-monster[i].coord.pixel_Y-coord.slope*(coord.pixel_X-monster[i].coord.pixel_X))<0.01)//double compare
             {
                 SetOfMonster[counter]=monster[i];
                 counter++;
