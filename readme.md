@@ -9,7 +9,7 @@ Han Chi Chiu (username: XenonHan): response for Tower and Monster part.
 
 LEE Tsz Leung (username: jordanleeeee): response for Arena and Monster part.
 
-HO Kin Chun (username: kchoao), N/A
+HO Kin Chun (username: kchoao): freeride
 
 
 Remark:
@@ -20,4 +20,4 @@ The stronger monster means more hp after some frames.
 
 Laser Tower upgrade with more power but consume more cost as a drawback.
 
-When running the FxTest for testing, mouse should not click anything. Instead, mouse should only shift to run the demo program.
+When running the FxTest for testing, mouse should not click anything. Instead, mouse should only shift inside the arena to run the demo program.

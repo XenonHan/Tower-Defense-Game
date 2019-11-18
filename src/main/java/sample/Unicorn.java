@@ -11,9 +11,9 @@ public class Unicorn extends Monster {
 	 * @param earning monster reward
 	 * @param speed monster speed
 	 */
- Unicorn(int health, int earning,int speed)
+	public Unicorn(int health, int earning,int speed)
 	{
-		super(health,earning,MonsterType.Unicorn,20);
+		super(health,earning,MonsterType.Unicorn,speed);
 	}
 
 

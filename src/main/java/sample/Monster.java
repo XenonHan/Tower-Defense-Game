@@ -76,9 +76,8 @@ public  class Monster extends Item{
 	public void slowDown(int freezeTime)
 	{
 		this.freezeTime = freezeTime;
-		speed-=5; //this fix, or your can modify
-		if(speed<0)
-			speed=0;
+		if(speed==normalSpeed)
+			speed-=9;
 	}
 
 	/**
@@ -127,7 +126,7 @@ public  class Monster extends Item{
 			if(coord.pixel_X<40||coord.pixel_X>160&&coord.pixel_X<200||coord.pixel_X>320&&coord.pixel_X<360)
 			{
 				distance=460-coord.pixel_Y-speed; //420 means in the middle of the grid, monster not move to the bottom of the bottom grid
-				if(coord.pixel_Y==20)
+				if(coord.pixel_Y==20&&coord.pixel_X!=20)
 				{
 					if(coord.pixel_X-320>0&&coord.pixel_X+speed>=340)
 					{
@@ -141,7 +140,7 @@ public  class Monster extends Item{
 					}
 					else
 					{
-						moveY=speed;
+						moveX=speed;
 					}
 				}
 				else if(distance >=0)

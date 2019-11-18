@@ -203,6 +203,10 @@ public class MyController {
     }
 
     //just for testing, should not be called in the game
+    /**
+     * get grid
+     * @return number of grid
+     */
     public Label[][] getGrid(){return grids;};
 }
 
@@ -226,7 +230,11 @@ class DragEventHandler implements EventHandler<MouseEvent> {
 
 class DragOverEventHandler implements EventHandler<DragEvent> {
     private Label target;
-
+    
+    /**
+     * process the target item
+     * @param target the target item
+     */
     public DragOverEventHandler(Label target){
         this.target = target;
     }
@@ -249,6 +257,10 @@ class DragOverEventHandler implements EventHandler<DragEvent> {
 class DragEnteredEventHandler implements EventHandler<DragEvent> {
     private Label target;
 
+    /**
+     * process the target item
+     * @param target the target item
+     */
     public DragEnteredEventHandler(Label target){
         this.target = target;
     }
@@ -269,6 +281,10 @@ class DragEnteredEventHandler implements EventHandler<DragEvent> {
 class DragExitedEventHandler implements EventHandler<DragEvent> {
     private Label target;
 
+    /**
+     * same to process the target item
+     * @param target the target item
+     */
     public DragExitedEventHandler(Label target){
         this.target = target;
     }
