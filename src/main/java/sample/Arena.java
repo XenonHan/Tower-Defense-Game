@@ -13,9 +13,9 @@ import java.util.Stack;
  * Is the arena of game, contain information about the current game state
  */
 public class Arena {
-    /**
-     * an array of Item, which contain all monsters and towers in exists in the arena
-     */
+	/**
+	 * an array of Item, which contain all monsters and towers in exists in the arena
+	 */
 	Item items[];
 	/**
 	 * number of items exists in the arena,
@@ -42,7 +42,7 @@ public class Arena {
 	 */
 	Coordinate endZone = new Coordinate(11, 0);
 	/**
-	 * This is the array use to store the monster HP
+	 * This is the array use to store the current monster HP
 	 */
 	int monstorHP[]= {15,30,50};//record the monster HP (fox, penguin, unicorn)
 
@@ -55,6 +55,7 @@ public class Arena {
 
 		Random rand = new Random();
 		int randInt = rand.nextInt(3);
+		//randInt = 0;
 		Monster e;
 		if (turn != 0 && turn % 10 == 0) {
 			for (int i = 0; i < 3; i++)
@@ -62,14 +63,9 @@ public class Arena {
 		}
 		switch (randInt) {
 			//todo implements to call correctly after Boby's work
-			case 0:
-				e = new Fox(monstorHP[0], 8, 20);
-				break;
-			case 1:
-				e = new Penguin(monstorHP[1], 15, 10);
-				break;
-			default:
-				e = new Unicorn(monstorHP[2], 10, 15);
+			case 0: e = new Fox(monstorHP[0], 8, 20); break;
+			case 1: e = new Penguin(monstorHP[1], 15, 10); break;
+			default: e = new Unicorn(monstorHP[2], 10, 15);
 		}
 		addItem(e);
 	}
@@ -82,7 +78,7 @@ public class Arena {
 	public Arena(AnchorPane paneArena) {
 		items = null;
 		num_items = 0;
-		money = 60;         //initial amount of resources
+		money = 60;         //initial amount of resources (60)
 		turn = 1;
 		this.paneArena = paneArena;
 		generate=1;
@@ -95,7 +91,7 @@ public class Arena {
 		for(int i=0; i<num_items; i++) {
 			if(items[i] instanceof Monster){
 				Coordinate coord = items[i].coord;
-				if(coord.pixel_X > endZone.pixel_X-20){
+				if((coord.pixel_X > endZone.pixel_X-20)){
 					return true;
 				}
 			}
@@ -120,7 +116,7 @@ public class Arena {
 	 * @param item the item that will be remove from the arena, it can be monster or tower
 	 */
 	public void removeItem(Item item){
-        //I assume the item must not null and its exists in the arena
+		//I assume the item must not null and its exists in the arena
 		num_items--;
 		Item temp[] = new Item[num_items];
 		for(int i=0, j=0; i<num_items+1; i++, j++){
@@ -166,7 +162,7 @@ public class Arena {
 			case 2: temp = new Catapult(x , y, 6); break;
 			case 3: temp = new LaserTower(x , y, 8); break;
 			default:
-                throw new IllegalStateException();
+				throw new IllegalStateException();
 		}
 		//money limit
 		if(money-temp.getCost()<0){
@@ -193,7 +189,7 @@ public class Arena {
 				case LaserTower: System.out.println("not enough resource to upgrade Laser Tower"); break;
 				case BasicTower: System.out.println("not enough resource to upgrade Basic Tower"); break;
 				case IceTower: System.out.println("not enough resource to upgrade Ice Tower"); break;
-                default: System.out.println("not enough resource to upgrade Catapult");
+				default: System.out.println("not enough resource to upgrade Catapult");
 			}
 			return false;
 		}
@@ -201,7 +197,7 @@ public class Arena {
 			case LaserTower: System.out.println("Laser Tower is being upgraded"); break;
 			case BasicTower: System.out.println("Basic Tower is being upgraded"); break;
 			case IceTower: System.out.println("Ice Tower is being upgraded"); break;
-            default: System.out.println("Catapult is being upgraded");
+			default: System.out.println("Catapult is being upgraded");
 		}
 		money -= t.getUpgradeCost();
 		t.upgrade();
@@ -211,10 +207,11 @@ public class Arena {
 	/**
 	 * Will be called when the player press next frame
 	 * process the game to new turn.
-	 * <p>first remove all the dead monster. Then Monster will move.
+	 * <p>first remove all the dead monster. Then Monster will move. If any monster step into the end
+	 * zone, return and do nothing.
 	 * Then pass an array of monster to each tower to
 	 * process attack, show the attack in GUI and console. After that collect resources from dead monster.
-	 * Finally generate new monster
+	 * Finally generate new monster.
 	 * </p>
 	 */
 	public void nextRound(){
@@ -228,17 +225,22 @@ public class Arena {
 				}
 			}
 		}
+		//todo move the monster i.e. update the new location of each monster
+		for(int i=0; i<num_items; i++){
+			if(items[i] instanceof Monster){
+				((Monster)items[i]).move();
+			}
+		}
+		if(isGameOver()){
+			//if monster step into end zone, no more attack, end the game immediately
+			return;
+		}
+		//collect info that will be pass to tower to process attack
 		int numMonster = 0;
 		Monster monsterArray[] = new Monster[num_items];
 		for(int i=0; i<num_items; i++){
 			if(items[i] instanceof Monster){
 				monsterArray[numMonster++] = (Monster)items[i];
-			}
-		}
-		//todo move the monster i.e. update the new location of each monster
-		for(int i=0; i<num_items; i++){
-			if(items[i] instanceof Monster){
-				((Monster)items[i]).move();
 			}
 		}
 		//todo process attack
@@ -254,58 +256,33 @@ public class Arena {
 				}
 				if(t.attackMonster(monsterArray, numMonster)){
 					if(t instanceof LaserTower){
+						//reduce money if laserTower shoot
 						money -= ((LaserTower) t).attackCost;
 					}
 					Monster attackedM = t.getGraph();
-					System.out.println(t.type + " at location (" + t.coord.x + " , " + t.coord.y +
-							") -> " + attackedM.getType() + " at location (" + attackedM.coord.x + " , " + attackedM.coord.y +")");
+					System.out.println(t.type + " at location (" + t.coord.pixel_X + " , " + t.coord.pixel_Y +
+							") -> " + attackedM.getType() + " at location (" + attackedM.coord.pixel_X+ " , " + attackedM.coord.pixel_Y +")");
 					Line line = new Line(t.coord.pixel_X, t.coord.pixel_Y, attackedM.coord.pixel_X, attackedM.coord.pixel_Y);
 					line.setStyle("-fx-stroke: red;");
 					//draw the laser line until the edge of the arena
 					if(t instanceof LaserTower){
-						line.setStrokeWidth(6);
-						double x = attackedM.coord.pixel_X;
-						double y = attackedM.coord.pixel_Y;
-						//not debug yet
-						//Monster is on LHS of tower
-						if(attackedM.coord.pixel_X<t.coord.pixel_X){
-							while (x>0 && y<480 && y>0){
-								x--;
-								y -= attackedM.coord.slope;
-							}
-						}
-						//Monster is on RHS of tower
-						if(attackedM.coord.pixel_X>t.coord.pixel_X){
-							while (x<480 && y<480 && y>0){
-								x++;
-								y += attackedM.coord.slope;
-							}
-						}
-						//Monster is exactly below the tower
-						if (attackedM.coord.pixel_X == t.coord.pixel_X && attackedM.coord.pixel_Y > t.coord.pixel_Y) {
-							y = 480;
-						}
-						//Monster is exactly on top of the tower
-						if (attackedM.coord.pixel_X == t.coord.pixel_X && attackedM.coord.pixel_Y < t.coord.pixel_Y) {
-							y = 0;
-						}
-						line.setEndX(x);
-						line.setEndY(y);
+						drawLaserAttackLine(attackedM, t, line);
 					}
+					//draw Catapult attacked region
 					if(t instanceof Catapult){
-                        Circle dot = new Circle(attackedM.coord.pixel_X, attackedM.coord.pixel_Y,25);
-                        dot.setFill(Color.RED);
-                        dot.setOpacity(0.5);
-                        paneArena.getChildren().add(dot);
-                        attackGraphic.push(dot);
-                    }
+						Circle dot = new Circle(attackedM.coord.pixel_X, attackedM.coord.pixel_Y,25);
+						dot.setFill(Color.RED);
+						dot.setOpacity(0.5);
+						paneArena.getChildren().add(dot);
+						attackGraphic.push(dot);
+					}
 					attackGraphic.push(line);
 					paneArena.getChildren().add(line);
 				}
 				t.newFrame();
 			}
 		}
-		//collect resources diu to monster dead
+		//collect resources due to monster dead
 		int earning = 0;
 		for(int i=0; i<num_items; i++){
 			if(items[i] instanceof Monster){
@@ -316,7 +293,7 @@ public class Arena {
 			}
 		}
 		money += earning;
-		if(turn==1||turn%3==0){		//you may change if you like
+		if(turn==1||turn%3==0){		//monster will be generate every three turn
 			generateMonster();
 		}
 		turn++;
@@ -327,5 +304,41 @@ public class Arena {
 	 */
 	public void setMoney(int money) {
 		this.money = money;
+	}
+
+	/**
+	 * draw the laser attack line to the edge of the arena
+	 * @param attackedM the monster being attacked by the tower
+	 * @param t	the tower that initiated the attack
+	 * @param line	the line that being editing
+	 */
+	private void drawLaserAttackLine(Monster attackedM, Tower t, Line line){
+		line.setStrokeWidth(6);
+		double x = attackedM.coord.pixel_X;
+		double y = attackedM.coord.pixel_Y;
+		//Monster is on LHS of tower
+		if(attackedM.coord.pixel_X<t.coord.pixel_X){
+			while (x>0 && y<480 && y>0){
+				x--;
+				y -= attackedM.coord.slope;
+			}
+		}
+		//Monster is on RHS of tower
+		if(attackedM.coord.pixel_X>t.coord.pixel_X){
+			while (x<480 && y<480 && y>0){
+				x++;
+				y += attackedM.coord.slope;
+			}
+		}
+		//Monster is exactly below the tower
+		if (attackedM.coord.pixel_X == t.coord.pixel_X && attackedM.coord.pixel_Y > t.coord.pixel_Y) {
+			y = 480;
+		}
+		//Monster is exactly on top of the tower
+		if (attackedM.coord.pixel_X == t.coord.pixel_X && attackedM.coord.pixel_Y < t.coord.pixel_Y) {
+			y = 0;
+		}
+		line.setEndX(x);
+		line.setEndY(y);
 	}
 }
