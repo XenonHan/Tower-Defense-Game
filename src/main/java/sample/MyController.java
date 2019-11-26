@@ -70,7 +70,7 @@ public class MyController {
         buttonPlay.setDisable(true);
         setDragAndDrop();
         labelMoneyLeft.setText(String.valueOf(arena.money));
-        //todo remove this line when submit this project
+        //add a faster method to process to next round
         buttonNextFrame.setOnMouseDragged(e->nextFrame());
     }
     /**
@@ -105,6 +105,7 @@ public class MyController {
                 arena = new Arena(paneArena);
             }
         }
+        //add icon to start and end zone
         Node endZone = new ImageView(new Image("file:src/main/resources/endZone.jpg", 35, 35, true, true));
         Node startZone = new ImageView(new Image("file:src/main/resources/startZone.png", 35, 35, true, true));
         grids[0][0].setGraphic(startZone);
@@ -125,18 +126,17 @@ public class MyController {
     private void nextFrame(){
         //clear the attack line
         clearGraphic();
-
-        arena.nextRound();                      //process next round
+        //process next round
+        arena.nextRound();
         //move monster icons
-        //first clear all the monster icon
-        while (!monsterIcons.empty()){
+        while (!monsterIcons.empty()){              //first clear all the monster icon
             paneArena.getChildren().remove(monsterIcons.pop());
         }
-        //then place monster in updated location
-        for(int i=0; i<arena.num_items; i++){
+        for(int i=0; i<arena.num_items; i++){       //then place monster in updated location
             if((arena.items)[i] instanceof Monster){
                 Monster monster = (Monster)((arena.items)[i]);
                 String url;
+                //choose correct icon according to monster type
                 switch(monster.getType()){
                     case Fox: url = "file:src/main/resources/fox.png"; break;
                     case Penguin: url = "file:src/main/resources/penguin.png"; break;
@@ -169,6 +169,7 @@ public class MyController {
             labelLaserTower.setOnDragDetected(null);
             String info = "Game Over ! _ ! You pass " + arena.turn + " turn";
             Alert loseInfo = new Alert(Alert.AlertType.INFORMATION, info);
+            loseInfo.setHeaderText("Opps...");
             loseInfo.show();
             return;
         }
@@ -195,6 +196,10 @@ public class MyController {
         }
         paneArena.setOnMouseMoved(e-> clearGraphic());
     }
+
+    /**
+     * clear all the graphic that representing the tower attack
+     */
     private void clearGraphic(){
         while(!arena.attackGraphic.empty()){
             //System.out.println("line clear");
@@ -230,7 +235,6 @@ class DragEventHandler implements EventHandler<MouseEvent> {
 
 class DragOverEventHandler implements EventHandler<DragEvent> {
     private Label target;
-    
     /**
      * process the target item
      * @param target the target item
@@ -256,7 +260,6 @@ class DragOverEventHandler implements EventHandler<DragEvent> {
 
 class DragEnteredEventHandler implements EventHandler<DragEvent> {
     private Label target;
-
     /**
      * process the target item
      * @param target the target item
@@ -280,7 +283,6 @@ class DragEnteredEventHandler implements EventHandler<DragEvent> {
 
 class DragExitedEventHandler implements EventHandler<DragEvent> {
     private Label target;
-
     /**
      * same to process the target item
      * @param target the target item
@@ -297,6 +299,10 @@ class DragExitedEventHandler implements EventHandler<DragEvent> {
 }
 
 //the following event handler class is added by me
+
+/**
+ * event handler for placing the tower
+ */
 class DragDroppedEventHandler implements EventHandler<DragEvent> {
     private Label target;
     private int x;
@@ -346,12 +352,11 @@ class DragDroppedEventHandler implements EventHandler<DragEvent> {
 
     @Override
     public void handle(DragEvent event) {
-        //System.out.println("xx");
         Dragboard db = event.getDragboard();
         boolean success = false;
         Node towerIcon = getTowerIcon(db);
 
-        if (target.getGraphic() == null) {  //if it already have tower,cannot build tower
+        if (target.getGraphic() == null) {  //if it already have tower, cannot build tower
             if(arena.addTower(towerID, x, y)){
                 success = true;
                 target.setGraphic(towerIcon);
@@ -376,8 +381,10 @@ class DragDroppedEventHandler implements EventHandler<DragEvent> {
     }
 }
 
+/**
+ * event handler for show tower info and shaded fire area
+ */
 class MouseEnterTowerEventHandler implements EventHandler<MouseEvent>{
-    //show tower info and shaded fire area
     private Label target;
     private AnchorPane paneArena;
     private Circle shadedArea;
@@ -434,7 +441,9 @@ class MouseEnterTowerEventHandler implements EventHandler<MouseEvent>{
         event.consume();
     }
 }
-
+/**
+ * event handler for remove tower info and shaded fire area
+ */
 class MouseExitedTowerEventHandler implements EventHandler<MouseEvent>{
     //remove tower info and shaded fire area
     private Label target;
@@ -451,7 +460,6 @@ class MouseExitedTowerEventHandler implements EventHandler<MouseEvent>{
     public void setInfoPane(Node infoPane) {
         this.infoPane = infoPane;
     }
-
     @Override
     public void handle (MouseEvent event) {
         //System.out.println("mouse exit");
@@ -460,7 +468,9 @@ class MouseExitedTowerEventHandler implements EventHandler<MouseEvent>{
         event.consume();
     }
 }
-
+/**
+ * event handler for let the player choose upgrade or destory tower option
+ */
 class MouseClickedEventHandler implements EventHandler<MouseEvent>{
     //remove tower info and shaded fire area
     private Label target;
@@ -496,7 +506,7 @@ class MouseClickedEventHandler implements EventHandler<MouseEvent>{
             operationPane.getChildren().add(notes);
         }
         operationPane.setAlignment(Pos.CENTER);
-        //the new scene poped up to let player choose tower operation
+        //the new scene pop up to let player choose tower operation
         Scene scene = new Scene(operationPane, 220, 50);
         stage.setResizable(false);
         stage.initStyle(StageStyle.UTILITY);
@@ -507,6 +517,9 @@ class MouseClickedEventHandler implements EventHandler<MouseEvent>{
     }
 }
 
+/**
+ * event handler for upgrade tower option
+ */
 class UpgradeActionHandler implements EventHandler<ActionEvent> {
     Stage stage;
     Tower tower;
@@ -528,7 +541,9 @@ class UpgradeActionHandler implements EventHandler<ActionEvent> {
         stage.close();    //todo should uncomment this line afterward
     }
 }
-
+/**
+ * event handler for destory tower option
+ */
 class DestroyActionHandler implements EventHandler<ActionEvent> {
     Stage stage;
     Tower tower;
@@ -542,18 +557,20 @@ class DestroyActionHandler implements EventHandler<ActionEvent> {
     }
     @Override
     public void handle(ActionEvent event) {
-        //Todo implement the remove operation// not quit sure correct or not
+        //Todo implement the remove operation
         //System.out.println("Destroy button clicked");
         target.setOnMouseEntered(null);
         target.setOnMouseExited(null);
         target.setOnMouseClicked(null);
         target.setGraphic(null);
-        //System.out.println("remove mouse event");
         arena.removeItem(tower);
         stage.close();
     }
 }
 
+/**
+ * event handler for showing monster remaining HP
+ */
 class MouseEnterMonsterEventHandler implements EventHandler<MouseEvent>{
     //show tower info and shaded fire area
     private AnchorPane paneArena;
@@ -592,7 +609,9 @@ class MouseEnterMonsterEventHandler implements EventHandler<MouseEvent>{
         event.consume();
     }
 }
-
+/**
+ * event handler for removing showing monster remaining HP
+ */
 class MouseExitedMonsterEventHandler implements EventHandler<MouseEvent>{
     //show tower info and shaded fire area
     private AnchorPane paneArena;
