@@ -5,11 +5,11 @@ Group 48 (TA-assigned)
 
 Member :
 
-Han Chi Chiu (username: XenonHan): response for Tower and Monster part.
+LEE Tsz Leung (username: jordanleeeee): response for Arena
 
-LEE Tsz Leung (username: jordanleeeee): response for Arena and Monster part.
+HAN Chi Chiu (username: XenonHan): response for Tower
 
-HO Kin Chun (username: kchoao): freeride
+HO Kin Chun (username: kchoao): response Monster part
 
 
 Remark:
