@@ -5,11 +5,11 @@ Group 48 (TA-assigned)
 
 Member :
 
-LEE Tsz Leung (username: jordanleeeee): response for Arena
+LEE Tsz Leung (username: jordanleeeee): response for Arena and Monster
 
-HAN Chi Chiu (username: XenonHan): response for Tower
+HAN Chi Chiu (username: XenonHan): response for Tower and Monster
 
-HO Kin Chun (username: kchoao): response Monster part
+HO Kin Chun (username: kchoao): dropped from the course
 
 
 Remark:
