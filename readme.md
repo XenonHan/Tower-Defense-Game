@@ -9,7 +9,7 @@ LEE Tsz Leung (username: jordanleeeee): response for Arena and Monster
 
 HAN Chi Chiu (username: XenonHan): response for Tower and Monster
 
-HO Kin Chun (username: kchoao): dropped from the course
+
 
 
 Remark:
